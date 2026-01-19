@@ -1,0 +1,6 @@
+expense_id,category,sub_category,description,vendor_id,amount,due_date,matter_id,status,receipt_url,approved_by,approved_at,notes,recorded_by,created_at,updated_at,expense_included,timesheet_id
+6,consulting,,Expense for Strategy Discussion - 1,,100,,13,pending,,10,2025-12-31 09:07:53.491,Created from timesheet on 2025-12-31,10,2025-12-31 09:07:53.212,2025-12-31 09:07:53.494,t,28
+5,legal_services,,Expense for Strategy Discussion - 1,,199.98,,13,pending,,10,2025-12-31 09:08:03.021,Created from timesheet on 2025-12-31,10,2025-12-31 09:07:53.097,2025-12-31 09:08:03.022,f,28
+8,misc,,Expense for Strategy Discussion - 1,,23,,13,pending,,10,2025-12-31 09:08:49.87,Created from timesheet on 2025-12-31,10,2025-12-31 09:08:49.655,2025-12-31 09:08:49.874,t,27
+7,legal_services,,Expense for Strategy Discussion - 1,,12,,13,pending,,10,2025-12-31 09:09:40.847,Created from timesheet on 2025-12-31,10,2025-12-31 09:08:49.549,2025-12-31 09:09:40.849,f,27
+9,office_supplies,Xerox,Expense for Email Communication - ,,4000,,14,pending,,,,Created from timesheet on 2025-12-01,3,2026-01-02 07:17:07.733,2026-01-02 07:17:07.811,t,31

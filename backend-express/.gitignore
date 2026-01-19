@@ -1,0 +1,12 @@
+# dependencies
+/node_modules
+
+# environment files
+*.env
+!.env.example
+/src/generated/prisma
+
+
+
+# build output
+/dist

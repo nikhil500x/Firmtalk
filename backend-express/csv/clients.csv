@@ -1,0 +1,7 @@
+client_id,user_id,client_name,industry,website_url,address,group_id,active_status,created_at,updated_at,external_reference_name,internal_reference_id,notes,external_reference_email,external_reference_phone,referral_contact_id,referral_partner_id,referral_source,client_code,client_creation_requested_by
+3,10,Tesla,Technology,,,2,t,2025-12-29 20:38:46.44,2025-12-29 20:38:46.44,,,,,,,,,,
+4,1,ABC Client 1,Technology,https://abccorp.com,"123, South Ex, Delhi, New Delhi, Delhi, 110011, India",3,t,2025-12-30 13:37:01.633,2025-12-30 13:37:01.633,,,,,,,,,,1
+5,10,XYZ,Technology,,,,t,2025-12-31 07:11:25.82,2025-12-31 07:11:25.82,,,,,,,,,,3
+16,1,TCS,Technology,www.tcs.com,"Mumbai, Maharashtra, India",4,t,2025-12-31 18:21:56.944,2025-12-31 18:21:56.944,,18,Major IT client,,,,,,TCS001,
+2,10,Life Labs,Technology,,"247 Park, Vikrholi, Mumbai, Maharashtra, 40050, India",1,t,2025-12-22 12:15:03.367,2026-01-05 05:07:18.973,,,Good,,,,,,,17
+17,1,TATA Steel,Manufacturing,https://staging.touchstonepartners.com/crm,"Jamshedpur, Jharkhand, India",4,t,2025-12-31 18:21:57.223,2026-01-05 05:20:32.499,,19,Steel manufacturing,,,,,,TS001,

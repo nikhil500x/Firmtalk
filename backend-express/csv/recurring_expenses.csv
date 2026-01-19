@@ -1,0 +1,6 @@
+expense_id,recurring_type,amount,start_date,end_date,recurrence_type,cycle_day,status,notes,user_id,gross_salary,deductions,net_salary,sub_category,vendor_id,software_name,description,seats_licenses,created_by,created_at,updated_at
+1,salary,889,2025-10-01 00:00:00,,monthly,1,active,"Salary
+",3,1000,111,889,,,,,,3,2025-12-20 15:52:57.714,2025-12-20 15:52:57.714
+3,office_expense,200,2025-12-23 00:00:00,,quarterly,10,active,"",,,,,rent,,,,,10,2025-12-29 13:32:54.534,2025-12-29 13:32:54.534
+4,office_expense,345,2025-12-16 00:00:00,,yearly,12,active,"",,,,,electricity,,,,,10,2025-12-29 13:33:16.982,2025-12-29 13:33:16.982
+5,subscription,2000,2025-12-16 00:00:00,,monthly,12,active,"",,,,,,,Clause,"",,10,2025-12-29 13:36:39.255,2025-12-29 13:36:39.255

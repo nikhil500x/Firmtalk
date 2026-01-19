@@ -1,0 +1,2 @@
+contact_id,client_id,name,number,email,designation,created_at,updated_at,is_primary,created_by,birthday,anniversary,linkedin_url,twitter_handle,notes,tags,preferred_contact_method,timezone
+1,17,Rajeev Singhal,1234567890,rajsin@gmail.com,Interim Manager Sales,2026-01-05 05:20:32.583,2026-01-05 05:20:32.583,t,10,,,,,,,,

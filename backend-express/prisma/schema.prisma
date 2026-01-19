@@ -1,0 +1,966 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  user_id                    Int                      @id @default(autoincrement())
+  name                       String?
+  email                      String                   @unique
+  password                   String?
+  phone                      String?
+  role_id                    Int
+  practice_area              String?
+  reporting_manager_id       Int?
+  last_login                 DateTime?
+  active_status              Boolean                  @default(true)
+  created_at                 DateTime                 @default(now())
+  updated_at                 DateTime                 @updatedAt
+  is_onboarded               Boolean                  @default(false)
+  azure_access_token         String?
+  azure_connected            Boolean                  @default(false)
+  azure_connected_at         DateTime?
+  azure_refresh_token        String?
+  azure_tenant_id            String?
+  azure_token_expires_at     DateTime?
+  gender                     String?
+  location                   String?
+  location_id                Int?
+  user_type                  String?
+  user_code                  String?                  @unique
+  date_of_joining            DateTime?
+  location_rel               locations?               @relation(fields: [location_id], references: [location_id])
+  created_client_groups      client_groups[]          @relation("ClientGroupCreator")
+  referred_clients           clients[]                @relation("ClientInternalReferrer")
+  requested_clients          clients[]                @relation("ClientCreationRequester")
+  clients                    clients[]
+  created_contacts           contacts[]               @relation("ContactCreator")
+  created_relationships      contact_relationships[]  @relation("RelationshipCreator")
+  created_badges             contact_badges[]         @relation("BadgeCreator")
+  created_interactions       contact_interactions[]   @relation("InteractionCreator")
+  opportunity_assignments    opportunities[]          @relation("OpportunityAssignee")
+  created_opportunities      opportunities[]          @relation("OpportunityCreator")
+  lead_assignments           leads[]                  @relation("LeadAssignee")
+  created_leads              leads[]                  @relation("LeadCreator")
+  created_automations        crm_automations[]        @relation("AutomationCreator")
+  expense_payments           expense_payments[]
+  invoice_payments           invoice_payments[]
+  created_invoices           invoices[]
+  invoice_partner_shares     invoice_partner_shares[]
+  reviewed_leaves            leaves[]                 @relation("LeaveReviewer")
+  leaves                     leaves[]
+  leave_balances             leave_balances[]         @relation("UserLeaveBalances")
+  matter_users               matter_users[]
+  assigned_matters           matters[]                @relation("AssignedLawyer")
+  created_matters            matters[]                @relation("MatterCreator")
+  requested_matters          matters[]                @relation("MatterCreationRequester")
+  raised_conflicts           matter_conflicts[]       @relation("ConflictRaiser")
+  resolved_conflicts         matter_conflicts[]       @relation("ConflictResolver")
+  onetime_expenses_approved  onetime_expenses[]       @relation("OneTimeExpenseApprover")
+  onetime_expenses_recorded  onetime_expenses[]       @relation("OneTimeExpenseRecorder")
+  recurring_expenses_created recurring_expenses[]     @relation("RecurringExpenseCreator")
+  salaries                   recurring_expenses[]     @relation("LawyerSalary")
+  assigned_tickets           support_tickets[]        @relation("TicketAssignee")
+  raised_tickets             support_tickets[]        @relation("TicketRaisedBy")
+  created_tasks              tasks[]                  @relation("TaskAssigner")
+  task_assignments           task_assignments[]       @relation("TaskAssignments")
+  task_completions           task_assignments[]       @relation("TaskCompletedBy")
+  approved_timesheets        timesheets[]             @relation("TimesheetApprover")
+  timesheets                 timesheets[]
+  activities_performed       user_activities[]        @relation("ActivityActor")
+  user_invitations           user_invitations[]
+  notifications              user_notifications[]
+  created_rate_cards         user_rate_card[]         @relation("RateCardCreator")
+  user_rate_card             user_rate_card[]
+  reporting_manager          users?                   @relation("ManagerSubordinates", fields: [reporting_manager_id], references: [user_id])
+  subordinates               users[]                  @relation("ManagerSubordinates")
+  role                       roles                    @relation(fields: [role_id], references: [role_id])
+
+  @@index([role_id])
+  @@index([reporting_manager_id])
+  @@index([user_code])
+  @@index([location_id])
+}
+
+model locations {
+  location_id          Int       @id @default(autoincrement())
+  location_code        String    @unique // "mumbai", "delhi", "bangalore", "delhi_litigation"
+  location_name        String    // "Mumbai", "Delhi", "Bangalore", "Delhi – Litigation"
+  display_name         String    // For UI display
+  office_address       String?   @db.Text // Full address
+  address_line_1       String?
+  address_line_2       String?
+  address_line_3       String?
+  phone                String?
+  fax                  String?
+  email                String?
+  website              String?
+  timezone             String?   @default("Asia/Kolkata")
+  gst_number           String?
+  is_billing_location  Boolean   @default(false) // Only billing locations have full details
+  active_status        Boolean   @default(true)
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
+  
+  users                users[]
+  matters              matters[]
+  invoices             invoices[]
+  
+  @@index([location_code])
+  @@index([is_billing_location])
+}
+
+model user_invitations {
+  invitation_id Int       @id @default(autoincrement())
+  email         String
+  role_id       Int
+  invited_by    Int
+  token         String    @unique
+  status        String    @default("pending")
+  expires_at    DateTime
+  accepted_at   DateTime?
+  created_at    DateTime  @default(now())
+  inviter       users     @relation(fields: [invited_by], references: [user_id])
+  role          roles     @relation(fields: [role_id], references: [role_id])
+
+  @@index([email])
+  @@index([status])
+}
+
+model leaves {
+  leave_id          Int      @id @default(autoincrement())
+  user_id           Int
+  leave_type        String
+  start_date        DateTime
+  end_date          DateTime
+  total_days        Float
+  reason            String
+  status            String   @default("pending")
+  reviewed_by       Int?
+  reviewer_comments String?
+  year              Int?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+  reviewer          users?   @relation("LeaveReviewer", fields: [reviewed_by], references: [user_id])
+  user              users    @relation(fields: [user_id], references: [user_id])
+
+  @@index([user_id])
+  @@index([status])
+  @@index([start_date])
+  @@index([leave_type])
+  @@index([year])
+}
+
+model leave_balances {
+  balance_id      Int      @id @default(autoincrement())
+  user_id         Int
+  leave_type      String
+  year            Int
+  total_allocated Int
+  balance         Int
+  pending         Int      @default(0)
+  applied         Int      @default(0)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  user            users    @relation("UserLeaveBalances", fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@unique([user_id, leave_type, year])
+  @@index([user_id, year])
+  @@index([leave_type])
+}
+
+model holidays {
+  holiday_id Int      @id @default(autoincrement())
+  location   String
+  date       DateTime
+  day        String
+  occasion   String
+  year       Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([location, date])
+  @@index([location, year])
+}
+
+model roles {
+  role_id          Int                @id @default(autoincrement())
+  name             String             @unique
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  role_permissions role_permissions[]
+  user_invitations user_invitations[]
+  users            users[]
+
+  @@index([name])
+}
+
+model permissions {
+  permission_id    Int                @id @default(autoincrement())
+  name             String             @unique
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now())
+  role_permissions role_permissions[]
+
+  @@index([name])
+}
+
+model role_permissions {
+  role_id       Int
+  permission_id Int
+  granted_at    DateTime    @default(now())
+  permission    permissions @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+  role          roles       @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
+
+  @@id([role_id, permission_id])
+  @@index([role_id])
+  @@index([permission_id])
+}
+
+model clients {
+  client_id                    Int               @id @default(autoincrement())
+  user_id                      Int
+  client_name                  String
+  industry                     String?
+  website_url                  String?
+  address                      String?
+  group_id                     Int?
+  active_status                Boolean           @default(true)
+  created_at                   DateTime          @default(now())
+  updated_at                   DateTime          @updatedAt
+  client_code                  String?           @unique // Unique code for the client
+  external_reference_name      String?
+  internal_reference_id        Int?
+  notes                        String?
+  external_reference_email     String?
+  external_reference_phone     String?
+  referral_source              String? // How client found the firm
+  referral_contact_id          Int? // Contact who referred (nullable)
+  referral_partner_id          Int? // External referral partner (nullable)
+  client_creation_requested_by Int? // User who requested client creation
+  group                        client_groups?    @relation(fields: [group_id], references: [group_id])
+  internal_referrer            users?            @relation("ClientInternalReferrer", fields: [internal_reference_id], references: [user_id])
+  user                         users             @relation(fields: [user_id], references: [user_id])
+  client_requester             users?            @relation("ClientCreationRequester", fields: [client_creation_requested_by], references: [user_id])
+  contacts                     contacts[]
+  invoices                     invoices[]
+  matters                      matters[]
+  support_tickets              support_tickets[]
+  opportunities                opportunities[]
+  converted_leads              leads[]           @relation("LeadConvertedClient")
+  tasks                        tasks[]
+
+  @@index([user_id])
+  @@index([client_name])
+  @@index([group_id])
+  @@index([industry])
+  @@index([internal_reference_id])
+}
+
+model client_groups {
+  group_id      Int       @id @default(autoincrement())
+  name          String    @unique
+  description   String?
+  active_status Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  created_by    Int?
+  creator       users?    @relation("ClientGroupCreator", fields: [created_by], references: [user_id])
+  clients       clients[]
+
+  @@index([name])
+  @@index([created_by])
+}
+
+model contacts {
+  contact_id               Int       @id @default(autoincrement())
+  client_id                Int?
+  name                     String
+  number                   String
+  email                    String
+  designation              String?
+  created_at               DateTime  @default(now())
+  updated_at               DateTime  @updatedAt
+  is_primary               Boolean   @default(false)
+  created_by               Int?
+  birthday                 DateTime? // Contact's birthday
+  anniversary              DateTime? // Work anniversary or other important date
+  linkedin_url             String? // LinkedIn profile URL
+  twitter_handle           String? // Twitter/X handle
+  notes                    String?   @db.Text // General notes about the contact
+  tags                     String[] // Array of tags for categorization
+  preferred_contact_method String? // 'email', 'phone', 'linkedin', etc.
+  timezone                 String? // Contact's timezone
+  client                   clients?  @relation(fields: [client_id], references: [client_id])
+  creator                  users?    @relation("ContactCreator", fields: [created_by], references: [user_id])
+
+  // Org chart relations (backward compatible - optional)
+  relationships_from contact_relationships[] @relation("ContactFrom")
+  relationships_to   contact_relationships[] @relation("ContactTo")
+  badges             contact_badges[]
+  interactions       contact_interactions[]
+  opportunities      opportunities[]
+  converted_leads    leads[]                 @relation("LeadConvertedContact")
+
+  @@index([client_id])
+  @@index([email])
+  @@index([created_by])
+}
+
+model matters {
+  matter_id                    Int                @id @default(autoincrement())
+  client_id                    Int
+  assigned_lawyer              Int?
+  matter_title                 String
+  matter_code                  String?
+  engagement_letter_url        String?
+  description                  String?
+  matter_type                  String?
+  practice_area                String?
+  start_date                   DateTime
+  estimated_deadline           DateTime?
+  status                       String             @default("active")
+  estimated_value              Float?
+  billing_rate_type            String?
+  opposing_party_name          String?
+  active_status                Boolean            @default(true)
+  created_at                   DateTime           @default(now())
+  updated_at                   DateTime           @updatedAt
+  billing_amount_reached       Float?
+  created_by                   Int?
+  matter_creation_requested_by Int?
+  conflict_raise_tokens        Json?
+  has_conflict                 Boolean            @default(false)
+  conflict_status              String?
+  currency                     String             @default("INR")
+  matter_location_id     Int?
+  matter_location        locations?  @relation(fields: [matter_location_id], references: [location_id])
+  invoices                     invoices[]
+  matter_users                 matter_users[]
+  user_rate_card               user_rate_card[]
+  matter_conflicts             matter_conflicts[]
+  assigned_lawyer_rel          users?             @relation("AssignedLawyer", fields: [assigned_lawyer], references: [user_id])
+  client                       clients            @relation(fields: [client_id], references: [client_id])
+  creator                      users?             @relation("MatterCreator", fields: [created_by], references: [user_id])
+  matter_requester             users?             @relation("MatterCreationRequester", fields: [matter_creation_requested_by], references: [user_id])
+  onetime_expenses             onetime_expenses[]
+  support_tickets              support_tickets[]
+  tasks                        tasks[]
+  timesheets                   timesheets[]
+  opportunities                opportunities[]
+  invoice_matters              invoice_matters[]
+
+  @@index([client_id])
+  @@index([assigned_lawyer])
+  @@index([status])
+  @@index([practice_area])
+  @@index([created_by])
+  @@index([has_conflict])
+  @@index([matter_location_id])
+}
+
+model matter_users {
+  matter_id    Int
+  user_id      Int
+  service_type String?
+  role         String?
+  assigned_at  DateTime @default(now())
+  hourly_rate  Float?
+  is_lead      Boolean  @default(false)
+  matter       matters  @relation(fields: [matter_id], references: [matter_id], onDelete: Cascade)
+  user         users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@id([matter_id, user_id])
+  @@index([matter_id])
+  @@index([user_id])
+  @@index([service_type])
+}
+
+model matter_conflicts {
+  conflict_id          Int       @id @default(autoincrement())
+  matter_id            Int
+  raised_by            Int
+  conflict_type        String
+  conflict_description String
+  conflict_details     String?
+  severity             String
+  status               String    @default("pending")
+  resolved_by          Int?
+  resolution_notes     String?
+  raised_at            DateTime  @default(now())
+  resolved_at          DateTime?
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
+  matter               matters   @relation(fields: [matter_id], references: [matter_id], onDelete: Cascade)
+  raiser               users     @relation("ConflictRaiser", fields: [raised_by], references: [user_id])
+  resolver             users?    @relation("ConflictResolver", fields: [resolved_by], references: [user_id])
+
+  @@index([matter_id])
+  @@index([raised_by])
+  @@index([status])
+  @@index([severity])
+}
+
+model timesheets {
+  timesheet_id                Int                  @id @default(autoincrement())
+  user_id                     Int
+  matter_id                   Int?
+  date                        DateTime
+  hours_worked                Int
+  billable_hours              Int
+  non_billable_hours          Int                  @default(0)
+  activity_type               String
+  description                 String?
+  hourly_rate                 Float?
+  calculated_amount           Float?
+  notes                       String?
+  last_update                 DateTime?
+  approved_by                 Int?
+  created_at                  DateTime             @default(now())
+  updated_at                  DateTime             @updatedAt
+  hourly_rate_currency        String?              @default("INR")
+  hourly_rate_conversion_rate Float?
+  calculated_amount_currency  String?
+  expenses                    onetime_expenses[]
+  invoice_timesheets          invoice_timesheets[]
+  approver                    users?               @relation("TimesheetApprover", fields: [approved_by], references: [user_id])
+  matter                      matters?             @relation(fields: [matter_id], references: [matter_id])
+  user                        users                @relation(fields: [user_id], references: [user_id])
+
+  @@index([user_id])
+  @@index([matter_id])
+  @@index([date])
+}
+
+model user_rate_card {
+  ratecard_id     Int       @id @default(autoincrement())
+  user_id         Int
+  matter_id      Int
+  service_type    String?
+  min_hourly_rate Float?    
+  max_hourly_rate Float?
+  currency_conversion_rate Float?    
+  effective_date  DateTime
+  end_date        DateTime?
+  is_active       Boolean   @default(true)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  created_by      Int?
+  creator         users?    @relation("RateCardCreator", fields: [created_by], references: [user_id])
+  user            users     @relation(fields: [user_id], references: [user_id])
+  matter         matters   @relation(fields: [matter_id], references: [matter_id])
+
+  @@unique([user_id, service_type, effective_date])
+  @@index([user_id])
+  @@index([service_type])
+  @@index([effective_date])
+  @@index([is_active])
+  @@index([created_by])
+}
+
+model invoices {
+  invoice_id                        Int                      @id @default(autoincrement())
+  parent_invoice_id                 Int?
+  client_id                         Int
+  matter_id                         Int? // Made nullable for multi-matter invoices
+  invoice_number                    String                   @unique
+  invoice_date                      DateTime
+  due_date                          DateTime
+  invoice_amount                    Float?
+  amount_paid                       Float                    @default(0)
+  isSplit                           Boolean                  @default(false)
+  status                            String                   @default("draft") // Changed from "new" to "draft"
+  description                       String
+  notes                             String?
+  date_from                         DateTime?
+  date_to                           DateTime?
+  billing_location                  String                   @default("mumbai") @db.VarChar(50)
+  billing_location_id               Int?
+  created_by                        Int
+  created_at                        DateTime                 @default(now())
+  updated_at                        DateTime                 @updatedAt
+  matter_currency                   String?
+  invoice_currency                  String?
+  currency_conversion_rate          Float?
+  invoice_amount_in_matter_currency Float?
+  // New fields for invoice revamp
+  discount_type                     String?                  @db.VarChar(20) // 'percentage' or 'fixed'
+  discount_value                    Float                    @default(0)
+  discount_amount                   Float                    @default(0) // Calculated discount
+  subtotal                          Float? // Sum before discount
+  final_amount                      Float? // Subtotal minus discount
+  user_exchange_rate                Float? // User-provided exchange rate to INR
+  amount_in_inr                     Float? // Final amount converted to INR
+  exchange_rates                    String?                  @db.Text // JSON object storing exchange rates for each currency: { "USD": 91.5, "EUR": 98.2 }
+  uploaded_invoice_url              String?                  @db.Text // Cloud storage URL
+  uploaded_at                       DateTime?
+  split_percentage                  Float? // Percentage for split invoices
+  split_sequence                    Int? // 1, 2, 3 for invoice number suffix
+  is_multi_matter                   Boolean                  @default(false) // Flag for multi-matter invoices
+  payments                          invoice_payments[]
+  invoice_timesheets                invoice_timesheets[]
+  invoice_expenses                  invoice_expenses[] // New relation for expenses
+  invoice_matters                   invoice_matters[] // New relation for multi-matter
+  invoice_partner_shares            invoice_partner_shares[] // New relation for partner attribution
+  client                            clients                  @relation(fields: [client_id], references: [client_id])
+  creator                           users                    @relation(fields: [created_by], references: [user_id])
+  matter                            matters?                 @relation(fields: [matter_id], references: [matter_id]) // Made optional
+  parent_invoice                    invoices?                @relation("InvoiceSplit", fields: [parent_invoice_id], references: [invoice_id], onDelete: Cascade)
+  split_invoices                    invoices[]               @relation("InvoiceSplit")
+  billing_location_rel              locations?               @relation(fields: [billing_location_id], references: [location_id])
+
+  @@index([client_id])
+  @@index([matter_id])
+  @@index([status])
+}
+
+model invoice_payments {
+  payment_id      Int      @id @default(autoincrement())
+  invoice_id      Int
+  payment_date    DateTime
+  amount          Float
+  payment_method  String
+  transaction_ref String?
+  notes           String?
+  recorded_by     Int
+  created_at      DateTime @default(now())
+  invoice         invoices @relation(fields: [invoice_id], references: [invoice_id])
+  recorder        users    @relation(fields: [recorded_by], references: [user_id])
+
+  @@index([invoice_id])
+  @@index([payment_date])
+}
+
+model invoice_timesheets {
+  invoice_id    Int
+  timesheet_id  Int
+  created_at    DateTime   @default(now())
+  billed_hours  Int? // Override for billable hours (copy from timesheet on creation, editable in draft)
+  billed_amount Float? // Calculated amount based on billed_hours
+  hourly_rate   Float? // Rate used for this invoice (copied from timesheet)
+  invoice       invoices   @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  timesheet     timesheets @relation(fields: [timesheet_id], references: [timesheet_id], onDelete: Restrict)
+
+  @@id([invoice_id, timesheet_id])
+  @@index([invoice_id])
+  @@index([timesheet_id])
+}
+
+model invoice_matters {
+  id         Int      @id @default(autoincrement())
+  invoice_id Int
+  matter_id  Int
+  created_at DateTime @default(now())
+  invoice    invoices @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  matter     matters  @relation(fields: [matter_id], references: [matter_id], onDelete: Restrict)
+
+  @@unique([invoice_id, matter_id])
+  @@index([invoice_id])
+  @@index([matter_id])
+}
+
+model invoice_expenses {
+  invoice_id              Int
+  expense_id              Int
+  created_at              DateTime   @default(now())
+  billed_amount           Float?     // Converted amount in invoice currency
+  billed_amount_currency  String?    // Invoice currency
+  original_amount         Float      // Original amount in INR
+  original_currency       String     @default("INR") // Always INR for expenses
+  exchange_rate           Float?     // Exchange rate used for conversion (INR to invoice currency)
+  invoice                 invoices   @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  expense                 onetime_expenses @relation(fields: [expense_id], references: [expense_id], onDelete: Restrict)
+
+  @@id([invoice_id, expense_id])
+  @@index([invoice_id])
+  @@index([expense_id])
+}
+
+model invoice_partner_shares {
+  id               Int      @id @default(autoincrement())
+  invoice_id       Int
+  partner_user_id  Int
+  share_percentage Float
+  created_at       DateTime @default(now())
+  invoice          invoices @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  partner          users    @relation(fields: [partner_user_id], references: [user_id], onDelete: Restrict)
+
+  @@unique([invoice_id, partner_user_id])
+  @@index([invoice_id])
+  @@index([partner_user_id])
+}
+
+model vendors {
+  vendor_id          Int                  @id @default(autoincrement())
+  vendor_name        String
+  contact_person     String?
+  email              String?
+  phone              String?
+  pan_card_number    String?
+  bank_name          String?
+  account_number     String?
+  ifsc_code          String?
+  payment_terms      String?
+  notes              String?
+  active_status      Boolean              @default(true)
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+  onetime_expenses   onetime_expenses[]
+  recurring_expenses recurring_expenses[]
+
+  @@index([vendor_name])
+}
+
+model onetime_expenses {
+  expense_id       Int                @id @default(autoincrement())
+  category         String
+  sub_category     String?
+  description      String
+  vendor_id        Int?
+  amount           Float
+  due_date         DateTime?
+  matter_id        Int?
+  status           String             @default("pending")
+  receipt_url      String?
+  approved_by      Int?
+  approved_at      DateTime?
+  notes            String?
+  recorded_by      Int
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  expense_included Boolean            @default(true)
+  timesheet_id     Int?
+  amount_currency  String             @default("INR")
+  payments         expense_payments[]
+  invoice_expenses invoice_expenses[] // New relation for invoices
+  approver         users?             @relation("OneTimeExpenseApprover", fields: [approved_by], references: [user_id])
+  matter           matters?           @relation(fields: [matter_id], references: [matter_id])
+  recorder         users              @relation("OneTimeExpenseRecorder", fields: [recorded_by], references: [user_id])
+  timesheet        timesheets?        @relation(fields: [timesheet_id], references: [timesheet_id])
+  vendor           vendors?           @relation(fields: [vendor_id], references: [vendor_id])
+
+  @@index([vendor_id])
+  @@index([matter_id])
+  @@index([category])
+  @@index([status])
+  @@index([timesheet_id])
+}
+
+model recurring_expenses {
+  expense_id      Int                @id @default(autoincrement())
+  recurring_type  String
+  amount          Float
+  start_date      DateTime
+  end_date        DateTime?
+  recurrence_type String             @default("monthly")
+  cycle_day       Int
+  status          String             @default("active")
+  notes           String?
+  user_id         Int?
+  gross_salary    Float?
+  deductions      Float?
+  net_salary      Float?
+  sub_category    String?
+  vendor_id       Int?
+  software_name   String?
+  description     String?
+  seats_licenses  Int?
+  created_by      Int
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @updatedAt
+  payments        expense_payments[]
+  creator         users              @relation("RecurringExpenseCreator", fields: [created_by], references: [user_id])
+  lawyer          users?             @relation("LawyerSalary", fields: [user_id], references: [user_id], onDelete: Restrict)
+  vendor          vendors?           @relation(fields: [vendor_id], references: [vendor_id])
+
+  @@index([recurring_type])
+  @@index([user_id])
+  @@index([vendor_id])
+  @@index([status])
+  @@index([start_date])
+}
+
+model expense_payments {
+  payment_id           Int                 @id @default(autoincrement())
+  onetime_expense_id   Int?
+  recurring_expense_id Int?
+  payment_date         DateTime
+  payment_for_month    DateTime?
+  amount               Float
+  payment_method       String
+  transaction_ref      String?
+  notes                String?
+  recorded_by          Int
+  created_at           DateTime            @default(now())
+  onetime_expense      onetime_expenses?   @relation(fields: [onetime_expense_id], references: [expense_id], onDelete: Cascade)
+  recorder             users               @relation(fields: [recorded_by], references: [user_id])
+  recurring_expense    recurring_expenses? @relation(fields: [recurring_expense_id], references: [expense_id], onDelete: Cascade)
+
+  @@index([onetime_expense_id])
+  @@index([recurring_expense_id])
+  @@index([payment_date])
+}
+
+model tasks {
+  task_id       Int      @id @default(autoincrement())
+  task_name     String
+  description   String?
+  matter_id     Int? // ADD ? to make it nullable
+  client_id     Int? // ADD ? to make it nullable
+  assigned_by   Int?
+  priority      String   @default("medium")
+  due_date      DateTime
+  status        String   @default("todo")
+  comments      String?
+  active_status Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations - also make them optional
+  matter           matters?           @relation(fields: [matter_id], references: [matter_id], onDelete: SetNull)
+  client           clients?           @relation(fields: [client_id], references: [client_id], onDelete: SetNull)
+  assigner         users?             @relation("TaskAssigner", fields: [assigned_by], references: [user_id], onDelete: SetNull)
+  task_assignments task_assignments[]
+
+  @@index([matter_id])
+  @@index([client_id])
+  @@index([assigned_by])
+  @@index([status])
+}
+
+// New junction table for many-to-many relationship
+model task_assignments {
+  task_id      Int
+  user_id      Int
+  status       String    @default("todo") // Each user has their own status
+  completed_at DateTime?
+  completed_by Int? // NEW: User who marked this assignment as completed
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  task      tasks  @relation(fields: [task_id], references: [task_id], onDelete: Cascade)
+  user      users  @relation("TaskAssignments", fields: [user_id], references: [user_id], onDelete: Cascade)
+  completer users? @relation("TaskCompletedBy", fields: [completed_by], references: [user_id], onDelete: SetNull)
+
+  @@id([task_id, user_id])
+  @@index([task_id])
+  @@index([user_id])
+  @@index([status])
+  @@index([completed_by])
+}
+
+model support_tickets {
+  ticket_id      Int       @id @default(autoincrement())
+  ticket_number  String    @unique
+  subject        String
+  description    String?
+  category       String
+  priority       String    @default("medium")
+  status         String    @default("open")
+  client_id      Int?
+  matter_id      Int?
+  raised_by      Int
+  assigned_to    Int?
+  assigned_at    DateTime?
+  resolved_at    DateTime?
+  comments       String?
+  attachment_url String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  assignee       users?    @relation("TicketAssignee", fields: [assigned_to], references: [user_id])
+  client         clients?  @relation(fields: [client_id], references: [client_id])
+  matter         matters?  @relation(fields: [matter_id], references: [matter_id])
+  raised_by_user users     @relation("TicketRaisedBy", fields: [raised_by], references: [user_id])
+
+  @@index([raised_by])
+  @@index([assigned_to])
+  @@index([status])
+  @@index([category])
+  @@index([client_id])
+  @@index([matter_id])
+}
+
+// ============================================================================
+// ORG CHART & INTERACTION TRACKING MODELS
+// ============================================================================
+
+model contact_relationships {
+  relationship_id   Int      @id @default(autoincrement())
+  from_contact_id   Int // Source contact
+  to_contact_id     Int // Target contact
+  relationship_type String   @default("reports_to") // 'reports_to', 'influences', 'collaborates_with', 'manages'
+  line_style        String   @default("solid") // 'solid', 'dashed', 'dotted'
+  line_color        String? // Optional custom color
+  notes             String?  @db.Text
+  created_by        Int?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now())
+
+  from_contact contacts @relation("ContactFrom", fields: [from_contact_id], references: [contact_id], onDelete: Cascade)
+  to_contact   contacts @relation("ContactTo", fields: [to_contact_id], references: [contact_id], onDelete: Cascade)
+  creator      users?   @relation("RelationshipCreator", fields: [created_by], references: [user_id], onDelete: SetNull)
+
+  @@unique([from_contact_id, to_contact_id, relationship_type])
+  @@index([from_contact_id])
+  @@index([to_contact_id])
+  @@index([relationship_type])
+}
+
+model contact_badges {
+  badge_id   Int      @id @default(autoincrement())
+  contact_id Int
+  badge_type String // 'champion', 'blocker', 'influencer', 'budget_holder', 'end_user', 'decision_maker'
+  created_by Int?
+  created_at DateTime @default(now())
+
+  contact contacts @relation(fields: [contact_id], references: [contact_id], onDelete: Cascade)
+  creator users?   @relation("BadgeCreator", fields: [created_by], references: [user_id], onDelete: SetNull)
+
+  @@unique([contact_id, badge_type])
+  @@index([contact_id])
+  @@index([badge_type])
+}
+
+model contact_interactions {
+  interaction_id      Int      @id @default(autoincrement())
+  contact_id          Int
+  interaction_type    String // 'calendar_event', 'meeting', 'note', 'email', 'call', 'task', 'matter'
+  interaction_data    String   @db.Text // JSON: { event_id, subject, date, participants, notes, etc. }
+  related_entity_type String? // 'matter', 'task', 'invoice', etc.
+  related_entity_id   Int?
+  created_by          Int
+  created_at          DateTime @default(now())
+
+  contact contacts @relation(fields: [contact_id], references: [contact_id], onDelete: Cascade)
+  creator users    @relation("InteractionCreator", fields: [created_by], references: [user_id], onDelete: Restrict)
+
+  @@index([contact_id])
+  @@index([interaction_type])
+  @@index([created_at])
+  @@index([related_entity_type, related_entity_id])
+}
+
+model user_activities {
+  activity_id   Int                  @id @default(autoincrement())
+  action_type   String
+  actor_id      Int
+  entity_type   String
+  entity_id     Int
+  metadata      String?
+  created_at    DateTime             @default(now())
+  actor         users                @relation("ActivityActor", fields: [actor_id], references: [user_id], onDelete: Cascade)
+  notifications user_notifications[]
+
+  @@index([actor_id])
+  @@index([entity_type, entity_id])
+  @@index([action_type])
+  @@index([created_at])
+}
+
+model user_notifications {
+  notification_id Int             @id @default(autoincrement())
+  user_id         Int
+  activity_id     Int
+  is_read         Boolean         @default(false)
+  read_at         DateTime?
+  created_at      DateTime        @default(now())
+  activity        user_activities @relation(fields: [activity_id], references: [activity_id], onDelete: Cascade)
+  user            users           @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id, is_read])
+  @@index([activity_id])
+  @@index([created_at])
+}
+
+// ============================================================================
+// CRM PIPELINE & LEAD MANAGEMENT MODELS
+// ============================================================================
+
+model opportunities {
+  opportunity_id      Int       @id @default(autoincrement())
+  client_id           Int? // Optional - can exist without client
+  contact_id          Int? // Optional - can exist without contact
+  matter_id           Int? // Nullable - becomes matter when won
+  opportunity_name    String
+  description         String?   @db.Text
+  practice_area       String?
+  stage               String    @default("prospect") // prospect, consultation, proposal, negotiation, won, lost
+  probability         Int       @default(0) // 0-100%
+  estimated_value     Float?
+  expected_close_date DateTime?
+  source              String? // referral, website, cold_call, etc.
+  lost_reason         String?   @db.Text
+  won_notes           String?   @db.Text
+  assigned_to         Int? // Attorney responsible
+  created_by          Int?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  client   clients?  @relation(fields: [client_id], references: [client_id], onDelete: SetNull)
+  contact  contacts? @relation(fields: [contact_id], references: [contact_id], onDelete: SetNull)
+  matter   matters?  @relation(fields: [matter_id], references: [matter_id], onDelete: SetNull)
+  assignee users?    @relation("OpportunityAssignee", fields: [assigned_to], references: [user_id], onDelete: SetNull)
+  creator  users?    @relation("OpportunityCreator", fields: [created_by], references: [user_id], onDelete: SetNull)
+
+  @@index([client_id])
+  @@index([contact_id])
+  @@index([assigned_to])
+  @@index([stage])
+  @@index([practice_area])
+  @@index([created_by])
+}
+
+model leads {
+  lead_id                 Int      @id @default(autoincrement())
+  name                    String
+  email                   String
+  phone                   String?
+  company                 String?
+  source                  String? // referral, website, social, event, etc.
+  status                  String   @default("new") // new, contacted, qualified, converted, lost
+  score                   Int      @default(0) // 0-100
+  assigned_to             Int?
+  converted_to_client_id  Int? // Nullable - becomes client when converted
+  converted_to_contact_id Int? // Nullable - becomes contact when converted
+  notes                   String?  @db.Text
+  tags                    String[] @default([])
+  practice_area_interest  String?
+  estimated_value         Float?
+  created_by              Int?
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+
+  assignee          users?    @relation("LeadAssignee", fields: [assigned_to], references: [user_id], onDelete: SetNull)
+  creator           users?    @relation("LeadCreator", fields: [created_by], references: [user_id], onDelete: SetNull)
+  converted_client  clients?  @relation("LeadConvertedClient", fields: [converted_to_client_id], references: [client_id], onDelete: SetNull)
+  converted_contact contacts? @relation("LeadConvertedContact", fields: [converted_to_contact_id], references: [contact_id], onDelete: SetNull)
+
+  @@index([assigned_to])
+  @@index([status])
+  @@index([source])
+  @@index([converted_to_client_id])
+  @@index([converted_to_contact_id])
+}
+
+model crm_automations {
+  automation_id      Int      @id @default(autoincrement())
+  name               String
+  trigger_type       String // 'new_lead', 'opportunity_stage_change', 'days_since_interaction'
+  trigger_conditions String   @db.Text // JSON conditions
+  action_type        String // 'create_task', 'send_email', 'update_field'
+  action_data        String   @db.Text // JSON action data
+  is_active          Boolean  @default(true)
+  created_by         Int?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  creator users? @relation("AutomationCreator", fields: [created_by], references: [user_id], onDelete: SetNull)
+
+  @@index([is_active])
+  @@index([trigger_type])
+}

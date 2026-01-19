@@ -1,0 +1,282 @@
+/* =============================================================================
+   EXTERNAL FONT IMPORTS
+   Import custom fonts from Google Fonts CDN
+   ============================================================================= */
+
+/**
+ * Google Fonts Import
+ * - Barlow: Primary UI font (sans-serif, geometric)
+ * - Georama: Alternative display font (sans-serif, modern)
+ * 
+ * Weights included: 300 (light), 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
+ * display=swap: Shows fallback font while custom font loads for better performance
+ */
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Georama:wght@300;400;500;600;700&display=swap');
+
+/* =============================================================================
+   TAILWIND CSS IMPORT
+   Imports all Tailwind utility classes
+   ============================================================================= */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* =============================================================================
+   REACT GRID LAYOUT STYLES
+   Required for drag-and-drop grid functionality
+   ============================================================================= */
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =============================================================================
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   Define global color scheme variables
+   ============================================================================= */
+
+html {
+  font-size: 90%;
+}
+
+* {
+  user-select: none;
+}
+
+/* Remove number input step(up and down arrows) for cleaner UI */
+input[type="number"]::-webkit-inner-spin-button, 
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*
+Source - https://stackoverflow.com/a/45289961
+Posted by Eng_Farghly
+Retrieved 2026-01-09, License - CC BY-SA 3.0
+*/
+.without_ampm::-webkit-datetime-edit-ampm-field {
+  display: none;
+}
+
+input[type=time]::-webkit-clear-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  margin: -10px;
+}
+/**
+ * Root-level CSS variables for theming
+ * These can be accessed throughout the application using var(--variable-name)
+ */
+:root {
+  /* Light mode colors (default) */    /* Primary background color - white */    /* Primary text color - near black */    --radius: 0.625rem;    --background: oklch(1 0 0);    --foreground: oklch(0.147 0.004 49.25);    --card: oklch(1 0 0);    --card-foreground: oklch(0.147 0.004 49.25);    --popover: oklch(1 0 0);    --popover-foreground: oklch(0.147 0.004 49.25);    --primary: oklch(0.216 0.006 56.043);    --primary-foreground: oklch(0.985 0.001 106.423);    --secondary: oklch(0.97 0.001 106.424);    --secondary-foreground: oklch(0.216 0.006 56.043);    --muted: oklch(0.97 0.001 106.424);    --muted-foreground: oklch(0.553 0.013 58.071);    --accent: oklch(0.97 0.001 106.424);    --accent-foreground: oklch(0.216 0.006 56.043);    --destructive: oklch(0.577 0.245 27.325);    --border: oklch(0.923 0.003 48.717);    --input: oklch(0.923 0.003 48.717);    --ring: oklch(0.709 0.01 56.259);    --chart-1: oklch(0.646 0.222 41.116);    --chart-2: oklch(0.6 0.118 184.704);    --chart-3: oklch(0.398 0.07 227.392);    --chart-4: oklch(0.828 0.189 84.429);    --chart-5: oklch(0.769 0.188 70.08);    --sidebar: oklch(0.985 0.001 106.423);    --sidebar-foreground: oklch(0.147 0.004 49.25);    --sidebar-primary: oklch(0.216 0.006 56.043);    --sidebar-primary-foreground: oklch(0.985 0.001 106.423);    --sidebar-accent: oklch(0.97 0.001 106.424);    --sidebar-accent-foreground: oklch(0.216 0.006 56.043);    --sidebar-border: oklch(0.923 0.003 48.717);    --sidebar-ring: oklch(0.709 0.01 56.259);
+}
+
+/* =============================================================================
+   TAILWIND THEME CONFIGURATION
+   Extends Tailwind with custom CSS variables
+   ============================================================================= */
+
+/**
+ * @theme inline directive
+ * Makes CSS variables available as Tailwind utility classes
+ * 
+ * Usage examples:
+ * - bg-background → background-color: var(--color-background)
+ * - text-foreground → color: var(--color-foreground)
+ * - font-sans → font-family: var(--font-sans)
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);  /* Requires Geist font to be imported */
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);  /* Requires Geist Mono font to be imported */  --radius-sm: calc(var(--radius) - 4px);  --radius-md: calc(var(--radius) - 2px);  --radius-lg: var(--radius);  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* =============================================================================
+   DARK MODE SUPPORT
+   Automatically switches colors based on system preference
+   ============================================================================= */
+
+/**
+ * Dark mode color overrides
+ * Activates when user's system is set to dark mode
+ * Uses same variable names but different values
+ */
+@media (prefers-color-scheme: dark) {
+  :root {  /* Dark background - near black */  /* Light text - off-white */
+  }
+}
+
+/* =============================================================================
+   BODY ELEMENT STYLES
+   Sets default styling for the entire page
+   ============================================================================= */
+
+/**
+ * Base body styles applied to all pages
+ * Uses CSS variables so it automatically adapts to light/dark mode
+ */
+body {  /* Page background color */       /* Default text color */  /* Fallback font stack */
+
+  /* OPTIONAL: Add these for better defaults */
+  /* margin: 0; */
+  /* padding: 0; */
+  /* min-height: 100vh; */
+  /* -webkit-font-smoothing: antialiased; */
+  /* -moz-osx-font-smoothing: grayscale; */
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   Custom utility classes for common patterns
+   ============================================================================= */
+
+/**
+ * .scrollbar-hide
+ * Completely hides scrollbars while maintaining scroll functionality
+ * Useful for custom-styled scroll containers
+ * 
+ * Usage: <div className="scrollbar-hide overflow-auto">...</div>
+ */
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox and IE/Edge legacy */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* =============================================================================
+   DEVELOPMENT TOOLS OVERRIDE
+   Hides Next.js development indicators and overlays
+   ============================================================================= */
+
+/**
+ * Force hide Next.js development tools
+ * Removes build indicator, error overlays, and dev portals
+ * Useful for clean screenshots, demos, or user testing
+ * 
+ * !important: Ensures these styles override Next.js defaults
+ * 
+ * Elements hidden:
+ * - nextjs-portal: Error overlay portal
+ * - [data-nextjs-dialog-overlay]: Dialog backdrop
+ * - [data-nextjs-dialog]: Error dialog
+ * - .__next-dev-indicator: Build activity indicator
+ */
+nextjs-portal,
+[data-nextjs-dialog-overlay],
+[data-nextjs-dialog],
+.__next-dev-indicator {
+  display: none !important;        /* Remove from layout */
+  opacity: 0 !important;           /* Make transparent */
+  pointer-events: none !important; /* Disable all interactions */
+}
+
+.dark {    --background: oklch(0.147 0.004 49.25);    --foreground: oklch(0.985 0.001 106.423);    --card: oklch(0.216 0.006 56.043);    --card-foreground: oklch(0.985 0.001 106.423);    --popover: oklch(0.216 0.006 56.043);    --popover-foreground: oklch(0.985 0.001 106.423);    --primary: oklch(0.923 0.003 48.717);    --primary-foreground: oklch(0.216 0.006 56.043);    --secondary: oklch(0.268 0.007 34.298);    --secondary-foreground: oklch(0.985 0.001 106.423);    --muted: oklch(0.268 0.007 34.298);    --muted-foreground: oklch(0.709 0.01 56.259);    --accent: oklch(0.268 0.007 34.298);    --accent-foreground: oklch(0.985 0.001 106.423);    --destructive: oklch(0.704 0.191 22.216);    --border: oklch(1 0 0 / 10%);    --input: oklch(1 0 0 / 15%);    --ring: oklch(0.553 0.013 58.071);    --chart-1: oklch(0.488 0.243 264.376);    --chart-2: oklch(0.696 0.17 162.48);    --chart-3: oklch(0.769 0.188 70.08);    --chart-4: oklch(0.627 0.265 303.9);    --chart-5: oklch(0.645 0.246 16.439);    --sidebar: oklch(0.216 0.006 56.043);    --sidebar-foreground: oklch(0.985 0.001 106.423);    --sidebar-primary: oklch(0.488 0.243 264.376);    --sidebar-primary-foreground: oklch(0.985 0.001 106.423);    --sidebar-accent: oklch(0.268 0.007 34.298);    --sidebar-accent-foreground: oklch(0.985 0.001 106.423);    --sidebar-border: oklch(1 0 0 / 10%);    --sidebar-ring: oklch(0.553 0.013 58.071);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Shimmer animation for skeleton loaders */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* =============================================================================
+   DASHBOARD GRID CUSTOMIZATIONS
+   Custom styles for react-grid-layout
+   ============================================================================= */
+
+/* Grid item transitions */
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+}
+
+/* Dragging state */
+.react-grid-item.react-grid-placeholder {
+  background: rgb(59 130 246 / 0.2);
+  border: 2px dashed rgb(59 130 246);
+  border-radius: 0.5rem;
+  transition-duration: 100ms;
+  z-index: 2;
+}
+
+/* Being dragged */
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 100;
+  opacity: 0.9;
+}
+
+/* Prevent text selection during drag */
+.react-grid-item.react-draggable-dragging * {
+  user-select: none;
+}
+
+/* Grid background when dragging (subtle guide) */
+/* Visible 3-column grid at all times with black lines */
+.layout {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(0, 0, 0, 0.1) 79px, rgba(0, 0, 0, 0.1) 80px),
+    repeating-linear-gradient(90deg, transparent, transparent calc(33.333% - 1px), rgba(0, 0, 0, 0.1) calc(33.333% - 1px), rgba(0, 0, 0, 0.1) 33.333%);
+  background-size: 100% 80px, 100% 100%;
+  min-height: 400px;
+}
+
+/* Make grid more visible when dragging */
+.layout.dragging-active {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(0, 0, 0, 0.25) 79px, rgba(0, 0, 0, 0.25) 80px),
+    repeating-linear-gradient(90deg, transparent, transparent calc(33.333% - 1px), rgba(0, 0, 0, 0.25) calc(33.333% - 1px), rgba(0, 0, 0, 0.25) 33.333%);
+  background-size: 100% 80px, 100% 100%;
+}

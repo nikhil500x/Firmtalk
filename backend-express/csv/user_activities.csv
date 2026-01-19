@@ -1,0 +1,63 @@
+activity_id,action_type,actor_id,entity_type,entity_id,metadata,created_at
+7,LEAVE_REJECTED,10,leave,1,"{""leaveType"":""regular"",""startDate"":""2025-12-19"",""endDate"":""2025-12-28"",""totalDays"":5,""comments"":""no christmas leaves neston""}",2025-12-19 07:43:24.671
+8,TASK_ASSIGNED,3,task,1,"{""taskName"":""Meeting"",""matterTitle"":""Test_Matter_Dec18"",""priority"":""medium"",""dueDate"":""2025-12-30T00:00:00.000Z""}",2025-12-19 10:39:14.761
+11,LEAVE_APPROVED,10,leave,2,"{""leaveType"":""regular"",""startDate"":""2025-12-24"",""endDate"":""2025-12-28"",""totalDays"":2,""comments"":""Approved""}",2025-12-19 11:35:23.153
+12,TASK_COMPLETED,10,task,1,"{""taskName"":""Meeting"",""matterTitle"":""Test_Matter_Dec18"",""oldStatus"":""todo"",""newStatus"":""completed""}",2025-12-19 11:49:58.33
+14,MATTER_CREATED,3,matter,4,"{""matterTitle"":""a"",""clientName"":""Life Labs"",""assignedLawyer"":null}",2025-12-22 13:07:32.816
+19,MATTER_CREATED,10,matter,8,"{""matterTitle"":""Life Labs Case"",""clientName"":""Life Labs"",""assignedLawyer"":""Bhairavi Desae ""}",2025-12-23 09:48:02.895
+23,CONFLICT_RESOLVED,10,matter,9,"{""matterTitle"":""Test_Matter_Dec21"",""conflictType"":""personal"",""raiserName"":""Neston Cabral""}",2025-12-23 12:08:04.901
+26,CONFLICT_RESOLVED,10,matter,10,"{""matterTitle"":""Test_Matter_Dec22"",""conflictType"":""opposing_party"",""raiserName"":""Neston Cabral""}",2025-12-23 13:45:21.617
+27,MATTER_CREATED,10,matter,11,"{""matterTitle"":""Test_Matter_Dec21"",""clientName"":""Life Labs"",""assignedLawyer"":""Bhairavi Desae ""}",2025-12-24 05:36:09.656
+28,TASK_ASSIGNED,10,task,2,"{""taskName"":""Task work"",""matterTitle"":""Life Labs Case"",""priority"":""high"",""dueDate"":""2025-12-26T00:00:00.000Z""}",2025-12-24 06:36:35.418
+32,TASK_COMPLETED,10,task,2,"{""taskName"":""Task work"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""completed""}",2025-12-24 06:38:27.751
+33,TASK_STATUS_CHANGED,10,task,2,"{""taskName"":""Task work"",""matterTitle"":""Life Labs Case"",""oldStatus"":""completed"",""newStatus"":""in_progress""}",2025-12-24 06:38:30.385
+37,TASK_STATUS_CHANGED,10,task,2,"{""taskName"":""Task work"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""overdue""}",2025-12-24 06:55:38.508
+38,TASK_COMPLETED,10,task,2,"{""taskName"":""Task work"",""matterTitle"":""Life Labs Case"",""oldStatus"":""overdue"",""newStatus"":""completed""}",2025-12-24 06:55:44.463
+42,TASK_ASSIGNED,10,task,3,"{""taskName"":""Coding"",""matterTitle"":""Life Labs Case"",""priority"":""medium"",""dueDate"":""2025-12-24T00:00:00.000Z""}",2025-12-24 08:12:03.155
+44,TASK_STATUS_CHANGED,10,task,3,"{""taskName"":""Coding"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""overdue""}",2025-12-24 08:12:44.368
+47,TASK_ASSIGNED,10,task,4,"{""taskName"":""Test Task"",""matterTitle"":""Life Labs Case"",""priority"":""medium"",""dueDate"":""2025-12-24T00:00:00.000Z""}",2025-12-24 09:30:33.306
+49,TASK_STATUS_CHANGED,10,task,4,"{""taskName"":""Test Task"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""overdue""}",2025-12-24 09:31:15.538
+50,MATTER_CREATED,3,matter,12,"{""matterTitle"":""Test 24th Dec"",""clientName"":""Life Labs"",""assignedLawyer"":""Neston Cabral""}",2025-12-24 09:39:19.114
+51,TASK_STATUS_CHANGED,10,task,4,"{""taskName"":""Test Task"",""matterTitle"":""Life Labs Case"",""oldStatus"":""overdue"",""newStatus"":""in_progress""}",2025-12-24 09:42:32.203
+54,TASK_STATUS_CHANGED,10,task,4,"{""taskName"":""Test Task"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-24 09:42:55.336
+55,TASK_COMPLETED,10,task,4,"{""taskName"":""Test Task"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""completed""}",2025-12-24 09:44:15.7
+56,TASK_ASSIGNED,10,task,5,"{""taskName"":""John doe"",""matterTitle"":""Test 24th Dec"",""priority"":""medium"",""dueDate"":""2025-12-24T00:00:00.000Z""}",2025-12-24 09:50:53.074
+57,TASK_ASSIGNED,10,task,6,"{""taskName"":""JOhn doe"",""matterTitle"":""Life Labs Case"",""priority"":""medium"",""dueDate"":""2025-12-24T00:00:00.000Z""}",2025-12-24 09:51:32.013
+58,TASK_COMPLETED,10,task,6,"{""taskName"":""JOhn doe"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""completed""}",2025-12-24 09:51:39.811
+59,TASK_ASSIGNED,10,task,7,"{""taskName"":""Test 2"",""matterTitle"":""Test_Matter_Dec22"",""priority"":""medium"",""dueDate"":""2025-12-22T00:00:00.000Z""}",2025-12-24 09:54:20.411
+60,TASK_COMPLETED,10,task,7,"{""taskName"":""Test 2"",""matterTitle"":""Test_Matter_Dec22"",""oldStatus"":""todo"",""newStatus"":""completed""}",2025-12-24 09:54:24.095
+61,TASK_ASSIGNED,10,task,8,"{""taskName"":""Test 3"",""matterTitle"":""Life Labs Case"",""priority"":""medium"",""dueDate"":""2025-12-22T00:00:00.000Z""}",2025-12-24 09:56:24.81
+63,TASK_STATUS_CHANGED,10,task,9,"{""taskName"":""Test 3"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-24 09:57:24.493
+66,TASK_STATUS_CHANGED,10,task,9,"{""taskName"":""Test 3"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-24 09:57:56.112
+68,TASK_STATUS_CHANGED,10,task,9,"{""taskName"":""Test 3"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-24 10:00:05.151
+72,TASK_STATUS_CHANGED,10,task,9,"{""taskName"":""Test 3"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-24 10:11:50.458
+73,TASK_STATUS_CHANGED,10,task,9,"{""taskName"":""Test 3"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""todo""}",2025-12-24 10:16:53.064
+77,TASK_ASSIGNED,10,task,10,"{""taskName"":""Neston"",""matterTitle"":""Life Labs Case"",""priority"":""medium"",""dueDate"":""2025-12-23T00:00:00.000Z""}",2025-12-24 10:20:10.725
+78,TASK_STATUS_CHANGED,10,task,10,"{""taskName"":""Neston"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-24 10:20:19.03
+80,TASK_COMPLETED,10,task,10,"{""taskName"":""Neston"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""completed""}",2025-12-24 10:20:48.092
+81,TASK_ASSIGNED,10,task,11,"{""taskName"":""Help"",""matterTitle"":""Life Labs Case"",""priority"":""medium"",""dueDate"":""2025-12-23T00:00:00.000Z""}",2025-12-24 10:36:59.004
+87,TASK_STATUS_CHANGED,10,task,11,"{""taskName"":""Help"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""in_progress""}",2025-12-29 12:07:28.206
+88,TASK_ASSIGNED,10,task,11,"{""taskName"":""Help"",""matterTitle"":""Life Labs Case"",""priority"":""medium""}",2025-12-29 12:07:28.266
+89,TASK_STATUS_CHANGED,9,task,11,"{""taskName"":""Help"",""matterTitle"":""Life Labs Case"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2025-12-29 16:25:54.013
+90,TASK_STATUS_CHANGED,9,task,11,"{""taskName"":""Help"",""matterTitle"":""Life Labs Case"",""oldStatus"":""in_progress"",""newStatus"":""todo""}",2025-12-29 16:26:02.827
+91,MATTER_CREATED,10,matter,13,"{""matterTitle"":""Corporate Merger"",""clientName"":""Tesla"",""assignedLawyer"":""Neston Cabral""}",2025-12-29 20:40:01.907
+92,TEAM_MEMBER_ADDED,1,matter,13,"{""matterTitle"":""Corporate Merger"",""memberName"":""Xavier N"",""memberRole"":""intern"",""serviceType"":""Coding""}",2025-12-31 09:17:00.806
+93,LEAVE_REQUESTED,3,leave,3,"{""leaveType"":""regular"",""startDate"":""2026-01-02"",""endDate"":""2026-01-05"",""totalDays"":2,""reason"":""h\n""}",2026-01-02 06:47:58.793
+94,TASK_ASSIGNED,3,task,14,"{""taskName"":""Intro "",""matterTitle"":""No matter assigned"",""priority"":""medium"",""dueDate"":""2026-01-05T00:00:00.000Z""}",2026-01-02 06:52:57.62
+95,TASK_COMPLETED,3,task,14,"{""taskName"":""Intro "",""matterTitle"":""No matter assigned"",""oldStatus"":""todo"",""newStatus"":""completed""}",2026-01-02 06:53:05.515
+96,TASK_ASSIGNED,3,task,15,"{""taskName"":""dd"",""matterTitle"":""No matter assigned"",""priority"":""medium"",""dueDate"":""2026-01-06T00:00:00.000Z""}",2026-01-02 06:53:50.406
+97,TASK_STATUS_CHANGED,3,task,15,"{""taskName"":""dd"",""matterTitle"":""No matter assigned"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2026-01-02 06:53:57.256
+98,TASK_STATUS_CHANGED,3,task,15,"{""taskName"":""dd"",""matterTitle"":""No matter assigned"",""oldStatus"":""in_progress"",""newStatus"":""todo""}",2026-01-02 06:54:03.798
+99,TASK_STATUS_CHANGED,3,task,15,"{""taskName"":""dd"",""matterTitle"":""No matter assigned"",""oldStatus"":""todo"",""newStatus"":""overdue""}",2026-01-02 06:54:10.787
+100,TASK_COMPLETED,3,task,15,"{""taskName"":""dd"",""matterTitle"":""No matter assigned"",""oldStatus"":""overdue"",""newStatus"":""completed""}",2026-01-02 06:54:15.466
+101,TASK_ASSIGNED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""priority"":""medium"",""dueDate"":""2026-01-01T00:00:00.000Z""}",2026-01-02 06:56:31.453
+102,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2026-01-02 06:56:40.563
+103,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""in_progress"",""newStatus"":""overdue""}",2026-01-02 06:56:45.648
+104,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""overdue"",""newStatus"":""todo""}",2026-01-02 06:56:52.918
+105,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""todo"",""newStatus"":""in_progress""}",2026-01-02 06:56:57.237
+106,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""in_progress"",""newStatus"":""overdue""}",2026-01-02 06:57:00.568
+107,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""overdue"",""newStatus"":""in_progress""}",2026-01-02 06:57:03.62
+108,TASK_STATUS_CHANGED,3,task,16,"{""taskName"":""dsf"",""matterTitle"":""No matter assigned"",""oldStatus"":""in_progress"",""newStatus"":""todo""}",2026-01-02 06:57:07.918
+109,MATTER_CREATED,3,matter,14,"{""matterTitle"":""abc"",""clientName"":""TATA Steel"",""assignedLawyer"":""Xavier N""}",2026-01-02 07:12:09.236
+110,LEAVE_REQUESTED,25,leave,4,"{""leaveType"":""regular"",""startDate"":""2026-01-05"",""endDate"":""2026-01-05"",""totalDays"":1,""reason"":""test by neston""}",2026-01-02 15:05:24.47
+111,TASK_ASSIGNED,10,task,17,"{""taskName"":""Work"",""matterTitle"":""No matter assigned"",""priority"":""high"",""dueDate"":""2026-01-03T00:00:00.000Z""}",2026-01-03 06:41:46.219

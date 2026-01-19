@@ -1,0 +1,61 @@
+{
+  "name": "touchstone",
+  "version": "0.1.0",
+  "private": true,
+  "overrides": {
+    "react-is": "^19.0.0"
+  },
+  "scripts": {
+    "dev": "next dev && start http://localhost:3000/login",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-hover-card": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-pdf/renderer": "^4.3.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0",
+    "docx": "^9.5.1",
+    "docxtemplater": "^3.67.6",
+    "file-saver": "^2.0.5",
+    "html-docx-js": "^0.3.1",
+    "lucide-react": "^0.545.0",
+    "next": "^15.5.7",
+    "officegen": "^0.6.5",
+    "pizzip": "^3.2.0",
+    "react": "19.1.0",
+    "react-day-picker": "^9.11.3",
+    "react-dom": "19.1.0",
+    "react-grid-layout": "^1.5.2",
+    "react-organizational-chart": "^2.2.1",
+    "react-toastify": "^11.0.5",
+    "recharts": "^3.5.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/file-saver": "^2.0.7",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/react-grid-layout": "^1.3.6",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.4",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^5"
+  }
+}

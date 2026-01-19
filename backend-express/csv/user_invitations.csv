@@ -1,0 +1,5 @@
+invitation_id,email,role_id,invited_by,token,status,expires_at,accepted_at,created_at
+15,cece.9701.aids@gmail.com,2,10,2681f4b4-01f0-47a9-9f19-c62836133e7c,accepted,2025-12-28 12:22:14.215,2025-12-26 12:38:36.581,2025-12-26 12:22:14.218
+18,michaelmyrondabreo@gmail.com,2,10,02673007-3c0c-4dd6-89d5-b26c90ced68d,accepted,2025-12-29 07:28:53.94,2025-12-27 07:29:49.176,2025-12-27 07:28:53.949
+19,pavithra.sanjeev@touchstonepartners.com,1,3,b54f3ecf-bd43-41a8-97e5-51a56bc70184,accepted,2025-12-31 08:17:02.624,2025-12-29 08:20:14.437,2025-12-29 07:32:48.365
+21,aditya@500x.tech,3,9,678f8778-2cda-4cce-8fc0-afe83dfce8d6,pending,2026-01-04 11:32:32.238,,2026-01-02 11:32:32.242

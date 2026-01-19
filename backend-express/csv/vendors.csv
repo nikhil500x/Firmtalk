@@ -1,0 +1,2 @@
+vendor_id,vendor_name,contact_person,email,phone,pan_card_number,bank_name,account_number,ifsc_code,payment_terms,notes,active_status,created_at,updated_at
+1,500x,,,,,BOB,,,,,t,2025-12-29 13:49:27.656,2025-12-29 13:50:16.853

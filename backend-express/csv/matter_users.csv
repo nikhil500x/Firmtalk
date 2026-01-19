@@ -1,0 +1,3 @@
+matter_id,user_id,role,assigned_at,hourly_rate,service_type,is_lead
+13,10,it,2025-12-30 11:20:18.154,300,Coding Genius,t
+13,3,Lawyer,2025-12-31 09:17:00.783,,Coding,f
