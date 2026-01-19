@@ -368,7 +368,7 @@ export default function UserPermissionsDialog({
             type="button"
             onClick={handleSave}
             disabled={isSaving || isLoading}
-            className="flex-1 bg-[#0752C2] hover:bg-[#053F9B] text-white rounded-xl"
+            className="flex-1 bg-[#d6162f] hover:bg-[#941022] text-white rounded-xl"
           >
             {isSaving ? 'Saving...' : 'Save Permissions'}
           </Button>

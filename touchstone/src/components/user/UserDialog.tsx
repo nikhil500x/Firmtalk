@@ -726,7 +726,7 @@ export default function UserDialog({ open, onOpenChange, onSuccess, mode, userDa
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-[#0752C2] hover:bg-[#053F9B] text-white rounded-xl"
+              className="flex-1 bg-[#d6162f] hover:bg-[#941022] text-white rounded-xl"
             >
               {isSubmitting 
                 ? (mode === 'create' ? 'Adding...' : 'Updating...') 

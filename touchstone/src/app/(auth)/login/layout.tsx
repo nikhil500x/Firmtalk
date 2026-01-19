@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Login - Touchstone Partners',
-  description: 'Login Page for Touchstone Partners',
+  title: 'FirmTalk',
+  description: 'FirmTalk',
 };
 
 export default function LoginLayout({
