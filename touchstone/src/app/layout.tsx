@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Touchstone Partners - Login",
-  description: "Touchstone Partners Management Portal",
+  title: "FirmTalk",
+  description: "FirmTalk",
 };
 
 export default function RootLayout({

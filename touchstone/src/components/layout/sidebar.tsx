@@ -131,31 +131,24 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`${
-        isCollapsed ? 'w-20' : 'w-64'
-      } text-white transition-all duration-300 ease-in-out flex flex-col relative overflow-hidden h-screen`}
+      className={`${isCollapsed ? 'w-20' : 'w-64'
+        } text-white transition-all duration-300 ease-in-out flex flex-col relative overflow-hidden h-screen`}
       style={{
-        backgroundImage: 'url("/images/backgroundnavbar.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        background: 'linear-gradient(to bottom, #378CFF, #0044A0)', // blue-500 → blue-600
       }}
     >
       {/* ========================================================================
-          BACKGROUND OVERLAY
-          Adds a semi-transparent blue overlay for better text readability
-      ========================================================================= */}
-      <div className="absolute inset-0 bg-blue-900/40" aria-hidden="true"></div>
+      BACKGROUND OVERLAY (optional - keep for depth/readability)
+      You can remove or reduce opacity if you want it flatter
+  ========================================================================= */}
+      <div className="absolute inset-0 bg-black/10" aria-hidden="true"></div>
 
       {/* ========================================================================
-          MAIN CONTENT CONTAINER
-          Contains header, navigation menu, and footer actions
-      ========================================================================= */}
+      MAIN CONTENT CONTAINER
+  ========================================================================= */}
       <div className="relative z-10 flex flex-col h-full">
-        
-        {/* ======================================================================
-            HEADER SECTION
-            Contains toggle button and company branding
-        ====================================================================== */}
+
+        {/* HEADER SECTION */}
         <div className="p-0 flex items-center gap-0 border-b border-white/10">
           {/* Collapse/Expand Toggle Button */}
           <button
@@ -167,41 +160,36 @@ export default function Sidebar() {
           >
             <Menu size={24} />
           </button>
-          
+
           {/* Company Branding - Only visible when expanded */}
           {!isCollapsed && (
             <div className="flex flex-col">
               <Image
                 src="/images/TouchStonePartnersWhiteLogo.png"
                 alt="Firmtalk"
-                height={64}        // h-16 → 64px
-                width={200}       // set an approximate width (adjust as needed)
+                height={64}
+                width={200}
                 className="object-contain"
               />
             </div>
           )}
         </div>
 
-        {/* ======================================================================
-            MAIN NAVIGATION MENU
-            Scrollable list of primary navigation items
-            Filtered based on user role - only shows allowed items
-        ====================================================================== */}
+        {/* MAIN NAVIGATION MENU */}
         <nav className="flex-1 overflow-y-auto py-4 scrollbar-hide" aria-label="Main navigation">
           <ul className="space-y-1 px-2">
             {filteredMenuItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-              
+
               return (
                 <li key={index}>
                   <Link
                     href={item.href}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                      isActive
-                        ? 'bg-white text-blue-900 shadow-lg'
-                        : 'text-white hover:bg-white/10'
-                    } ${isCollapsed ? 'justify-center' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${isActive
+                        ? 'bg-white/90 text-blue-900 shadow-md'
+                        : 'text-white hover:bg-white/15'
+                      } ${isCollapsed ? 'justify-center' : ''}`}
                     aria-label={item.label}
                     aria-current={isActive ? 'page' : undefined}
                   >
@@ -211,7 +199,6 @@ export default function Sidebar() {
                       strokeWidth={2}
                       aria-hidden="true"
                     />
-                    {/* Menu item label - Only visible when expanded */}
                     {!isCollapsed && (
                       <span className="text-sm font-medium">{item.label}</span>
                     )}
@@ -222,28 +209,22 @@ export default function Sidebar() {
           </ul>
         </nav>
 
-        {/* ======================================================================
-            FOOTER MENU
-            Contains utility actions (Support, Settings, Logout)
-            CHANGE: Support now renders as Link, others remain as buttons
-        ====================================================================== */}
+        {/* FOOTER MENU */}
         <div className="border-t border-white/10 py-4">
           <ul className="space-y-1 px-2" aria-label="Footer navigation">
             {footerMenuItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = item.href && (pathname === item.href || pathname.startsWith(item.href + '/'));
-              
+
               return (
                 <li key={index}>
                   {item.href ? (
-                    // Render as Link if href exists (Support)
                     <Link
                       href={item.href}
-                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActive
-                          ? 'bg-white text-blue-900 shadow-lg'
-                          : 'text-white hover:bg-white/10'
-                      } ${isCollapsed ? 'justify-center' : ''}`}
+                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${isActive
+                          ? 'bg-white/90 text-blue-900 shadow-md'
+                          : 'text-white hover:bg-white/15'
+                        } ${isCollapsed ? 'justify-center' : ''}`}
                       aria-label={item.label}
                       aria-current={isActive ? 'page' : undefined}
                     >
@@ -258,17 +239,14 @@ export default function Sidebar() {
                       )}
                     </Link>
                   ) : (
-                    // Render as button if onClick exists (Settings, Logout)
                     <button
                       onClick={item.onClick}
-                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all text-white hover:bg-white/10 ${
-                        isCollapsed ? 'justify-center' : ''
-                      }`}
+                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all text-white hover:bg-white/15 ${isCollapsed ? 'justify-center' : ''
+                        }`}
                       aria-label={item.label}
                       suppressHydrationWarning
                     >
                       <Icon size={20} strokeWidth={2} aria-hidden="true" />
-                      {/* Menu item label - Only visible when expanded */}
                       {!isCollapsed && (
                         <span className="text-sm font-medium">{item.label}</span>
                       )}

@@ -355,7 +355,8 @@ export default function QuickTimesheetEntry({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting || loading}>
+            <Button className="mb-2 flex items-center justify-center gap-2 px-4 py-2.5 
+                        bg-gradient-to-r from-red-500 to-red-600  text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-colors duration-200 shadow-md py-3" type="submit" disabled={submitting || loading}>
               {submitting ? 'Saving...' : isEditMode ? 'Update Entry' : 'Save Entry'}
             </Button>
           </DialogFooter>

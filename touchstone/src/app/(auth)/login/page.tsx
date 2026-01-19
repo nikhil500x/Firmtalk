@@ -7,23 +7,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  // const [keepSignedIn, setKeepSignedIn] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-
   const [returnUrl, setReturnUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get returnUrl from query parameters
     const params = new URLSearchParams(window.location.search);
     const url = params.get('returnUrl');
-    console.log('🔍 Extracted returnUrl:', url); // ADD THIS
+    console.log('🔍 Extracted returnUrl:', url);
     setReturnUrl(url);
   }, []);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
-      console.log('🔐 Checking auth, returnUrl is:', returnUrl); // ADD THIS
+      console.log('🔐 Checking auth, returnUrl is:', returnUrl);
       try {
         const response = await fetch(`/api/auth/session`, {
           credentials: 'include',
@@ -35,7 +33,7 @@ export default function LoginPage() {
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
-            console.log('✅ Already logged in, redirecting to:', returnUrl || '/dashboard'); // ADD THIS
+            console.log('✅ Already logged in, redirecting to:', returnUrl || '/dashboard');
             window.location.href = returnUrl || '/dashboard';
             return;
           }
@@ -50,30 +48,19 @@ export default function LoginPage() {
     checkAuthStatus();
   }, []);
 
-  // ============================================================================
-  // PREVENT BACK NAVIGATION TO LOGIN PAGE AFTER SUCCESSFUL LOGIN
-  // This only prevents going back to login, not normal navigation
-  // ============================================================================
   useEffect(() => {
-    // Only prevent back if user just came from a successful login
-    // Check if there's a flag indicating they just logged in
     const justLoggedIn = sessionStorage.getItem('justLoggedIn');
-    
     if (justLoggedIn === 'true') {
-      // Clear the flag
       sessionStorage.removeItem('justLoggedIn');
-      // Replace the login page in history so back button skips it
       window.history.replaceState(null, '', '/login');
     }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (isLoggingIn) return;
-    
     setIsLoggingIn(true);
-    
+
     try {
       const response = await fetch(`/api/auth/login`, {
         method: 'POST',
@@ -87,13 +74,9 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // READ returnUrl DIRECTLY from current URL
         const params = new URLSearchParams(window.location.search);
         const returnUrlFromQuery = params.get('returnUrl');
-        
         console.log('🎯 Redirecting to:', returnUrlFromQuery || data.data.redirectUrl);
-        
-        // Use returnUrl if present, otherwise use API's redirectUrl
         window.location.href = returnUrlFromQuery || data.data.redirectUrl;
       } else {
         alert(data.message || 'Login failed');
@@ -106,12 +89,9 @@ export default function LoginPage() {
     }
   };
 
-  // ============================================================================
-  // LOADING STATE WHILE CHECKING AUTH
-  // ============================================================================
   if (isChecking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -121,230 +101,247 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      {/* Left Panel - Brand Section */}
-      <div className="relative w-[50%] bg-[#0F3C5F] rounded-[32px] my-4 ml-6 mr-3 overflow-hidden flex items-center justify-center shadow-2xl">
-        {/* Place for your image - positioned on the right edge */}
-        <div
-          className="absolute right-0 top-0 bottom-0 w-3"
-          style={{
-            backgroundImage: 'url("/images/touchstone-border.jpg")',
-            backgroundRepeat: 'repeat-y',
-            backgroundSize: '100% auto',
-          }}
-        />
-
-        {/* Brand Image - Left aligned */}
-        <div className="z-10 px-8">
+    <div className="min-h-screen flex w-full bg-white">
+      {/* Left Panel - Onboarding Section */}
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden flex-col">
+        <div className="relative flex-1 -mt-52">
           <Image
-            src="/images/TouchStonePartnersWhiteLogo.png"
+            src="/images/firmtalk_login_left_side.png"
             alt="Firmtalk Logo"
-            height={400}
-            width={400}
-            className="object-contain"
-            style={{ marginLeft: "-10px" }}
+            fill
+            className="object-cover"
           />
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-[480px]">
-          <div className="bg-white border border-gray-200 rounded-[24px] p-12 shadow-sm">
-            {/* Header */}
-            <div className="mb-8 text-center">
-              <h2 
-                className="text-[#0F3C5F] mb-3"
-                style={{
-                  fontFamily: 'PF Square Sans Pro, sans-serif',
-                  fontWeight: 700,
-                  fontSize: '32px',
-                  lineHeight: '1.2em'
-                }}
-              >
-                Login
-              </h2>
-              <p 
-                className="text-gray-500"
-                style={{
-                  fontFamily: 'Barlow, sans-serif',
-                  fontWeight: 400,
-                  fontSize: '15px',
-                  lineHeight: '1.4em'
-                }}
-              >
-                Welcome back. Enter your credentials to access your account
-              </p>
-            </div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="mb-12">
+            <h2 
+              className="text-gray-900 mb-2"
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                fontWeight: 700,
+                fontSize: '24px',
+                lineHeight: '1.3em',
+                textAlign: 'center'
+              }}
+            >
+              Login to your account
+            </h2>
+          </div>
 
-            <form onSubmit={handleSubmit}>
-              {/* Form Fields Container */}
-              <div className="space-y-5 mb-6">
-                {/* Email Field */}
-                <div className="w-full">
-                  <label 
-                    htmlFor="email"
-                    className="block text-gray-700 mb-2"
-                    style={{
-                      fontFamily: 'Barlow, sans-serif',
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '1.2em'
-                    }}
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="hello@example.com"
-                    disabled={isLoggingIn}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#0752C2] focus:ring-2 focus:ring-blue-100 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    style={{
-                      fontFamily: 'Barlow, sans-serif',
-                      fontWeight: 400,
-                      fontSize: '15px',
-                      lineHeight: '1.2em'
-                    }}
-                    suppressHydrationWarning
-                  />
-                </div>
-
-                {/* Password Field */}
-                <div className="w-full">
-                  <div className="flex justify-between items-center mb-2">
-                    <label 
-                      htmlFor="password"
-                      className="text-gray-700"
-                      style={{
-                        fontFamily: 'Barlow, sans-serif',
-                        fontWeight: 500,
-                        fontSize: '14px',
-                        lineHeight: '1.2em'
-                      }}
-                    >
-                      Password
-                    </label>
-                    {/* <button
-                      type="button"
-                      className="text-[#0752C2] hover:underline transition-all text-sm"
-                      style={{
-                        fontFamily: 'Barlow, sans-serif',
-                        fontWeight: 400,
-                        fontSize: '14px',
-                        lineHeight: '1.2em'
-                      }}
-                      suppressHydrationWarning
-                    >
-                      Forgot Password
-                    </button> */}
-                  </div>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="●●●●●●●●●●●●●●"
-                      disabled={isLoggingIn}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#0752C2] focus:ring-2 focus:ring-blue-100 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      style={{
-                        fontFamily: 'Barlow, sans-serif',
-                        fontWeight: 400,
-                        fontSize: '15px',
-                        lineHeight: '1.2em'
-                      }}
-                      suppressHydrationWarning
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={isLoggingIn}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      suppressHydrationWarning
-                    >
-                      <Image
-                        src="/images/eye-icon.svg"
-                        alt="Toggle password visibility"
-                        width={20}
-                        height={20}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Checkbox */}
-              {/* <div className="w-full mb-8">
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      checked={keepSignedIn}
-                      onChange={(e) => setKeepSignedIn(e.target.checked)}
-                      disabled={isLoggingIn}
-                      className="sr-only"
-                    />
-                    <div 
-                      className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-all ${
-                        keepSignedIn 
-                          ? 'border-[#0752C2] bg-white' 
-                          : 'border-gray-300 bg-white'
-                      } ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {keepSignedIn && (
-                        <Image
-                          src="/images/checkbox-icon.svg"
-                          alt=""
-                          width={16}
-                          height={16}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <span 
-                    className="text-gray-700"
-                    style={{
-                      fontFamily: 'Barlow, sans-serif',
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '1.2em'
-                    }}
-                  >
-                    Keep me signed in
-                  </span>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1">
+                <label 
+                  htmlFor="email"
+                  className="text-gray-900"
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '1.6em'
+                  }}
+                >
+                  Email Address
                 </label>
-              </div> */}
-
-              {/* Login Button */}
-              <button
-                type="submit"
+                <span className="text-red-500">*</span>
+              </div>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Input your registered email"
                 disabled={isLoggingIn}
-                className={`w-full h-[52px] rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm ${
-                  isLoggingIn 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gray-300 hover:bg-[#0752C2] hover:shadow-md'
-                } text-white`}
+                required
+                className="w-full border border-gray-300 rounded-[10px] px-5 py-4 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
                 style={{
-                  fontFamily: 'Barlow, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '16px',
-                  lineHeight: '1em'
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  lineHeight: '1.6em'
                 }}
                 suppressHydrationWarning
-              >
-                {isLoggingIn ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Logging in...</span>
+              />
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1">
+                <label 
+                  htmlFor="password"
+                  className="text-gray-900"
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '1.6em'
+                  }}
+                >
+                  Password
+                </label>
+                <span className="text-red-500">*</span>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="●●●●●●●●●●●●●●"
+                  disabled={isLoggingIn}
+                  required
+                  className="w-full border border-gray-300 rounded-[10px] px-5 py-4 pr-12 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '1.6em'
+                  }}
+                  suppressHydrationWarning
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoggingIn}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  suppressHydrationWarning
+                >
+                  <Image
+                    src="/images/eye-icon.svg"
+                    alt="Toggle password visibility"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Remember Me & Forgot Password */}
+            {/* <div className="flex items-center justify-between gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    disabled={isLoggingIn}
+                    className="sr-only"
+                  />
+                  <div 
+                    className={`w-5 h-5 border-2 rounded-md flex items-center justify-center transition-all ${
+                      rememberMe 
+                        ? 'border-blue-600 bg-blue-600' 
+                        : 'border-gray-300 bg-white'
+                    } ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {rememberMe && (
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
                   </div>
-                ) : (
-                  'Login'
-                )}
+                </div>
+                <span 
+                  className="text-gray-600"
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '1.6em'
+                  }}
+                >
+                  Remember Me
+                </span>
+              </label>
+              <button
+                type="button"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  lineHeight: '1.6em'
+                }}
+              >
+                Forgot Password?
               </button>
-            </form>
+            </div> */}
+
+            {/* Login Button */}
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className={`w-full h-14 rounded-[10px] flex items-center justify-center transition-all duration-300 font-semibold text-white ${
+                isLoggingIn 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+              }`}
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                fontWeight: 700,
+                fontSize: '16px',
+                lineHeight: '1.5em',
+                letterSpacing: '0.01875em'
+              }}
+              suppressHydrationWarning
+            >
+              {isLoggingIn ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Logging in...</span>
+                </div>
+              ) : (
+                'Login'
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-16 flex flex-col items-center gap-3 text-center">
+            <p 
+              className="text-gray-500"
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                fontWeight: 500,
+                fontSize: '14px',
+                lineHeight: '1.6em'
+              }}
+            >
+              © 2026 Firmtalk . Allrights reserved.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                type="button"
+                className="text-gray-900 hover:text-blue-600 transition-colors"
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  lineHeight: '1.6em'
+                }}
+              >
+                Terms & Conditions
+              </button>
+              <button
+                type="button"
+                className="text-gray-900 hover:text-blue-600 transition-colors"
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  lineHeight: '1.6em'
+                }}
+              >
+                Privacy Policy
+              </button>
+            </div>
           </div>
         </div>
       </div>

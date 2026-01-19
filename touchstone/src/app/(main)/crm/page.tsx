@@ -236,7 +236,7 @@ function CRMPageContent() {
                 <>
                 <button
                   onClick={handleAddNew}
-                  className="flex items-center gap-2 px-4 py-3 bg-gradient-to-b from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors shadow-sm"
+                  className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600  text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-colors shadow-sm"
                 >
                   <Plus size={20} />
                   <span className="text-sm font-medium">
@@ -355,7 +355,7 @@ function CRMPageContent() {
                 <>
                 <button
                   onClick={handleAddNew}
-                  className="flex items-center gap-2 px-4 py-3 bg-gradient-to-b from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors shadow-sm"
+                  className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600  text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-colors shadow-sm"
                 >
                   <Plus size={20} />
                   <span className="text-sm font-medium">
