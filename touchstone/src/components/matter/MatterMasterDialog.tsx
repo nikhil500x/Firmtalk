@@ -1520,9 +1520,19 @@ const refreshServiceTypes = async (userId: number, context: 'assigned_lawyer' | 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.client_id || !formData.matter_title.trim() || !formData.start_date) {
-        // alert("Client ID, matter title, and start date are required.");
-        toast.error("Client ID, matter title, and start date are required.");
+    // Validate required fields with specific error messages
+    if (!formData.client_id) {
+        toast.error("Please select a client");
+        return;
+    }
+    
+    if (!formData.matter_title || !formData.matter_title.trim()) {
+        toast.error("Please enter a matter title");
+        return;
+    }
+    
+    if (!formData.start_date) {
+        toast.error("Please select a start date");
         return;
     }
 
@@ -1830,7 +1840,7 @@ const refreshServiceTypes = async (userId: number, context: 'assigned_lawyer' | 
                       variant="outline"
                       role="combobox"
                       aria-expanded={clientComboboxOpen}
-                      className="w-full justify-between"
+                      className={`w-full justify-between ${!formData.client_id ? 'border-red-300' : ''}`}
                       disabled={isLoadingClients || isClosed || mode === 'edit'}
                     >
                       {isLoadingClients ? (
@@ -2025,6 +2035,8 @@ const refreshServiceTypes = async (userId: number, context: 'assigned_lawyer' | 
                   onChange={(e) => handleChange('matter_title', e.target.value)}
                   placeholder="e.g., Corporate Merger - ABC Inc."
                   required
+                  className={!formData.matter_title?.trim() ? 'border-red-300 focus:border-red-500' : ''}
+                  disabled={isClosed}
                 />
               </div>
 
@@ -2039,6 +2051,8 @@ const refreshServiceTypes = async (userId: number, context: 'assigned_lawyer' | 
                     value={formData.start_date}
                     onChange={(e) => handleChange('start_date', e.target.value)}
                     required
+                    className={!formData.start_date ? 'border-red-300 focus:border-red-500' : ''}
+                    disabled={isClosed}
                   />
                 </div>
 
