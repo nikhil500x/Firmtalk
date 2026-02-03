@@ -14,8 +14,12 @@
 /coverage
 
 # next.js
-/.next/
+/.next/cache/
 /out/
+
+# Keep standalone build for deployment (commit after local build)
+!/.next/standalone/
+!/.next/static/
 
 # production
 /build

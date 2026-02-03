@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { formatAmountWithCurrency, getCurrencySymbol, type CurrencyCode } from '@/lib/currencyUtils';
 import CurrencyBadge from '@/components/ui/currency-badge';
 import { toast } from 'react-toastify';
+import { useConfig } from '@/hooks/useConfig';
 // import InvoicePreview from './InvoicePreview';
 
 
@@ -115,6 +116,9 @@ const initialFormData = {
   invoiceCurrency: '',
 };
 
+// Fallback currencies
+const FALLBACK_CURRENCIES = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'JPY'];
+
 export default function InvoiceDialog({
   open,
   onOpenChange,
@@ -122,6 +126,17 @@ export default function InvoiceDialog({
   invoiceId,
   onSuccess,
 }: InvoiceDialogProps) {
+  // Use dynamic configuration
+  const { currencies: configCurrencies } = useConfig();
+
+  // Compute supported currencies from config
+  const configSupportedCurrencies = useMemo(() => {
+    if (configCurrencies.length > 0) {
+      return configCurrencies.filter(c => c.is_active).map(c => c.code);
+    }
+    return FALLBACK_CURRENCIES;
+  }, [configCurrencies]);
+
   // ✅ ADD: Warn if invoiceId is missing in edit mode
   useEffect(() => {
     if (open && mode === 'edit' && !invoiceId) {
@@ -147,8 +162,15 @@ export default function InvoiceDialog({
   const [locationComboboxOpen, setLocationComboboxOpen] = useState(false);
   const [originalTimesheetIds, setOriginalTimesheetIds] = useState<number[]>([]);
   const [matterCurrency, setMatterCurrency] = useState<string>('INR');
-  const [supportedCurrencies, setSupportedCurrencies] = useState<string[]>(['INR', 'USD', 'EUR', 'GBP', 'AED', 'JPY']);
+  const [supportedCurrencies, setSupportedCurrencies] = useState<string[]>(FALLBACK_CURRENCIES);
   const [currencyComboboxOpen, setCurrencyComboboxOpen] = useState(false);
+
+  // Update supportedCurrencies when config loads
+  useEffect(() => {
+    if (configSupportedCurrencies.length > 0) {
+      setSupportedCurrencies(configSupportedCurrencies);
+    }
+  }, [configSupportedCurrencies]);
   const [conversionRate, setConversionRate] = useState<number | null>(null);
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [filterByUser, setFilterByUser] = useState<number | 'all'>('all'); // Filter by user/person

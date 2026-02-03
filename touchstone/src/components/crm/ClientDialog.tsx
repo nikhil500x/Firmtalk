@@ -36,6 +36,7 @@ import {
 import { ChevronsUpDown, Check as CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from 'react-toastify';
+import { useConfig } from '@/hooks/useConfig';
 
 interface ClientGroup {
   id: number;
@@ -138,6 +139,12 @@ const createEmptyContact = (): AdditionalContact => ({
   designation: '',
 });
 
+// Fallback industries if config is not loaded
+const FALLBACK_INDUSTRIES = [
+  'Finance', 'Technology', 'Healthcare', 'Manufacturing',
+  'Retail', 'Real Estate', 'Education', 'Other'
+];
+
 export default function ClientDialog({
   open,
   onOpenChange,
@@ -146,7 +153,13 @@ export default function ClientDialog({
   clientData,
   industries,
 }: ClientDialogProps) {
+  const { industries: configIndustries } = useConfig();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Use config values if available, otherwise use fallbacks
+  const industryOptions = configIndustries.length > 0
+    ? configIndustries.filter(i => i.is_active).map(i => i.name)
+    : FALLBACK_INDUSTRIES;
   const [clientGroups, setClientGroups] = useState<ClientGroup[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(false);
   const [showNewGroupInput, setShowNewGroupInput] = useState(false);
@@ -745,30 +758,17 @@ export default function ClientDialog({
 
                       <SelectContent>
                         <div className="max-h-60 overflow-y-auto">
-
-                          {formData.industry &&
-                            ![
-                              "Finance",
-                              "Technology",
-                              "Healthcare",
-                              "Manufacturing",
-                              "Retail",
-                              "Real Estate",
-                              "Education",
-                              "Other",
-                            ].includes(formData.industry) && (
-                              <SelectItem value={formData.industry}>
-                                {formData.industry}
-                              </SelectItem>
-                            )}
-                          <SelectItem value="Finance">Finance</SelectItem>
-                          <SelectItem value="Technology">Technology</SelectItem>
-                          <SelectItem value="Healthcare">Healthcare</SelectItem>
-                          <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                          <SelectItem value="Retail">Retail</SelectItem>
-                          <SelectItem value="Real Estate">Real Estate</SelectItem>
-                          <SelectItem value="Education">Education</SelectItem>
-                          {/* <SelectItem value="Other">Other</SelectItem> */}
+                          {/* Show current value if it's not in the options list */}
+                          {formData.industry && !industryOptions.includes(formData.industry) && (
+                            <SelectItem value={formData.industry}>
+                              {formData.industry}
+                            </SelectItem>
+                          )}
+                          {industryOptions.map((industry) => (
+                            <SelectItem key={industry} value={industry}>
+                              {industry}
+                            </SelectItem>
+                          ))}
                         </div>
 
                         <div className="border-t p-2">

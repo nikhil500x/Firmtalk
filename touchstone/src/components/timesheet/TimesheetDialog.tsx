@@ -39,6 +39,7 @@ import CurrencyBadge from '@/components/ui/currency-badge';
 import { formatAmountWithCurrency, type CurrencyCode } from '@/lib/currencyUtils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/contexts/AuthContext';
+import { useConfig } from '@/hooks/useConfig';
 
 interface Matter {
   id: number;
@@ -143,17 +144,6 @@ const createEmptyExpense = (): ExpenseData => ({
   receiptPreview: null,
 });
 
-const activityTypes = [
-  'Client Meeting',
-  'Strategy Discussion',
-  'Document Review',
-  'Research',
-  'Drafting',
-  'Court Appearance',
-  'Phone Call',
-  'Email Communication',
-  'Other',
-];
 // Helper functions for time conversion
 const timeStringToMinutes = (timeString: string): number => {
   if (!timeString) return 0;
@@ -176,6 +166,29 @@ const minutesToTimeString = (minutes: unknown): string => {
     .padStart(2, '0')}`;
 };
 
+// Fallback activity types if config is not loaded
+const FALLBACK_ACTIVITY_TYPES = [
+  'Client Meeting',
+  'Strategy Discussion',
+  'Document Review',
+  'Research',
+  'Drafting',
+  'Court Appearance',
+  'Phone Call',
+  'Email Communication',
+  'Other',
+];
+
+// Fallback expense categories if config is not loaded
+const FALLBACK_EXPENSE_CATEGORIES = [
+  { value: 'legal_services', label: 'Legal Services' },
+  { value: 'office_supplies', label: 'Office Supplies' },
+  { value: 'equipment', label: 'Equipment' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'consulting', label: 'Consulting' },
+  { value: 'misc', label: 'Miscellaneous' },
+];
+
 export default function TimesheetDialog({
   open,
   onOpenChange,
@@ -185,6 +198,16 @@ export default function TimesheetDialog({
   initialData,
 }: TimesheetDialogProps) {
   const { role } = useAuth();
+  const { activityTypes: configActivityTypes, expenseCategories: configExpenseCategories } = useConfig();
+
+  // Use config values if available, otherwise use fallbacks
+  const activityTypeOptions = configActivityTypes.length > 0
+    ? configActivityTypes.filter(at => at.is_active).map(at => at.name)
+    : FALLBACK_ACTIVITY_TYPES;
+
+  const expenseCategoryOptions = configExpenseCategories.length > 0
+    ? configExpenseCategories.filter(ec => ec.is_active).map(ec => ({ value: ec.code, label: ec.name }))
+    : FALLBACK_EXPENSE_CATEGORIES;
   const [formData, setFormData] = useState(initialFormData);
   const [savedExpenses, setSavedExpenses] = useState<ExpenseData[]>([]); // Expenses that have been confirmed
   const [currentExpense, setCurrentExpense] = useState<ExpenseData | null>(null); // Expense being edited
@@ -1223,7 +1246,7 @@ const normalizeTimeValue = (value: unknown): string => {
                   <SelectValue placeholder="Select activity type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {activityTypes.map((type) => (
+                  {activityTypeOptions.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
                     </SelectItem>
@@ -1391,12 +1414,11 @@ const normalizeTimeValue = (value: unknown): string => {
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="legal_services">Legal Services</SelectItem>
-                        <SelectItem value="office_supplies">Office Supplies</SelectItem>
-                        <SelectItem value="equipment">Equipment</SelectItem>
-                        <SelectItem value="travel">Travel</SelectItem>
-                        <SelectItem value="consulting">Consulting</SelectItem>
-                        <SelectItem value="misc">Miscellaneous</SelectItem>
+                        {expenseCategoryOptions.map((category) => (
+                          <SelectItem key={category.value} value={category.value}>
+                            {category.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

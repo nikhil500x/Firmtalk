@@ -31,6 +31,7 @@ import uploadsRoutes from './routes/uploads';
 import approvalsRoutes from './routes/approvals';
 import conflictsRoutes from './routes/conflicts';
 import currencyRoutes from './routes/currency';
+import configRoutes from './routes/config';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -120,6 +121,7 @@ app.use('/api/uploads', uploadsRoutes);
 app.use('/api/approvals', approvalsRoutes);
 app.use('/api/conflicts', conflictsRoutes);
 app.use('/api/currency', currencyRoutes);
+app.use('/api/config', configRoutes);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

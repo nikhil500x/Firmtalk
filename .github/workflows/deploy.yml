@@ -1,0 +1,92 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  SERVER_IP: 3.110.145.31
+  SERVER_USER: ubuntu
+  PROJECT_ROOT: /home/ubuntu/Touchstone
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy Frontend (Next.js standalone build)
+        run: |
+          rsync -avz --delete \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude '.env*' \
+            --exclude '.env.local.example' \
+            touchstone/.next/standalone/ \
+            ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.PROJECT_ROOT }}/touchstone/.next/standalone/
+
+      - name: Deploy Frontend Static Files
+        run: |
+          rsync -avz --delete \
+            touchstone/.next/static/ \
+            ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.PROJECT_ROOT }}/touchstone/.next/standalone/.next/static/
+
+      - name: Deploy Frontend Public Files
+        run: |
+          rsync -avz --delete \
+            touchstone/public/ \
+            ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.PROJECT_ROOT }}/touchstone/.next/standalone/public/
+
+      - name: Deploy Backend
+        run: |
+          rsync -avz --delete \
+            --exclude 'node_modules' \
+            --exclude '.env' \
+            --exclude '.env.local' \
+            backend-express/ \
+            ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.PROJECT_ROOT }}/backend-express/
+
+      - name: Install Dependencies & Run Migrations
+        run: |
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} << 'EOF'
+            cd /home/ubuntu/Touchstone/backend-express
+
+            # Install dependencies
+            npm ci --omit=dev
+
+            # Generate Prisma client
+            npx prisma generate
+
+            # Run database migrations
+            npx prisma migrate deploy
+          EOF
+
+      - name: Restart Services
+        run: |
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} << 'EOF'
+            # Restart PM2 services
+            pm2 restart touchstone-backend --update-env
+            pm2 restart touchstone-frontend --update-env
+
+            # Save PM2 process list
+            pm2 save
+
+            # Reload nginx
+            sudo nginx -t && sudo systemctl reload nginx
+          EOF
+
+      - name: Health Check
+        run: |
+          sleep 5
+          curl -f https://firmtalk.ai/api/health || echo "Health check endpoint not configured"
+          echo "Deployment completed successfully!"

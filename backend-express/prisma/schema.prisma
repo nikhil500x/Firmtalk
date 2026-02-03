@@ -80,6 +80,7 @@ model users {
   reporting_manager          users?                   @relation("ManagerSubordinates", fields: [reporting_manager_id], references: [user_id])
   subordinates               users[]                  @relation("ManagerSubordinates")
   role                       roles                    @relation(fields: [role_id], references: [role_id])
+  audit_logs                 audit_logs[]             @relation("AuditLogChanger")
 
   @@index([role_id])
   @@index([reporting_manager_id])
@@ -106,13 +107,24 @@ model locations {
   active_status        Boolean   @default(true)
   created_at           DateTime  @default(now())
   updated_at           DateTime  @updatedAt
-  
+  // New fields for invoice generation
+  office_code          String?   // 'M', 'D', 'B', 'LT' - short code for invoice numbers
+  invoice_prefix       String?   // Custom prefix for invoices from this location
+  default_currency     String?   @default("INR") // Default billing currency
+  pan_number           String?   // PAN for invoices
+  cin_number           String?   // Company CIN
+  bank_name            String?
+  bank_account_number  String?
+  bank_ifsc_code       String?
+  bank_branch          String?
+
   users                users[]
   matters              matters[]
   invoices             invoices[]
-  
+
   @@index([location_code])
   @@index([is_billing_location])
+  @@index([office_code])
 }
 
 model user_invitations {
@@ -963,4 +975,178 @@ model crm_automations {
 
   @@index([is_active])
   @@index([trigger_type])
+}
+
+// ============================================================================
+// CONFIGURATION TABLES
+// These tables replace hardcoded values and allow dynamic configuration
+// ============================================================================
+
+model practice_areas {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  description   String?
+  display_order Int       @default(0)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+  @@index([display_order])
+}
+
+model matter_types {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  description   String?
+  display_order Int       @default(0)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+}
+
+model matter_statuses {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  code          String    @unique // 'active', 'closed', 'on_hold', etc.
+  color         String?   // Hex color for UI display
+  display_order Int       @default(0)
+  is_final      Boolean   @default(false) // Cannot add timesheets if true
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+  @@index([code])
+}
+
+model activity_types {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  category      String?   // 'billable', 'non-billable', 'admin'
+  description   String?
+  is_billable   Boolean   @default(true)
+  display_order Int       @default(0)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+  @@index([category])
+}
+
+model expense_categories {
+  id            Int                  @id @default(autoincrement())
+  name          String               @unique
+  code          String               @unique // 'travel', 'legal_services', etc.
+  description   String?
+  parent_id     Int?
+  is_billable   Boolean              @default(true)
+  display_order Int                  @default(0)
+  is_active     Boolean              @default(true)
+  created_at    DateTime             @default(now())
+  updated_at    DateTime             @updatedAt
+  parent        expense_categories?  @relation("ExpenseCategoryHierarchy", fields: [parent_id], references: [id])
+  children      expense_categories[] @relation("ExpenseCategoryHierarchy")
+
+  @@index([is_active])
+  @@index([parent_id])
+  @@index([code])
+}
+
+model leave_types {
+  id              Int       @id @default(autoincrement())
+  name            String    @unique
+  code            String    @unique // 'casual', 'sick', 'earned', etc.
+  description     String?
+  days_per_year   Int       @default(0) // 0 means unlimited or not applicable
+  carry_forward   Boolean   @default(false)
+  max_carry_days  Int       @default(0)
+  requires_doc    Boolean   @default(false) // Requires supporting document
+  min_notice_days Int       @default(0) // Minimum advance notice required
+  display_order   Int       @default(0)
+  is_active       Boolean   @default(true)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([is_active])
+  @@index([code])
+}
+
+model industries {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  description   String?
+  display_order Int       @default(0)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+}
+
+model currencies {
+  code          String    @id // 'INR', 'USD', 'EUR', etc.
+  name          String    // 'Indian Rupee', 'US Dollar', etc.
+  symbol        String    // '₹', '$', '€', etc.
+  decimal_places Int      @default(2)
+  is_default    Boolean   @default(false)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+  @@index([is_default])
+}
+
+model billing_types {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique // 'Hourly', 'Fixed Fee', 'Retainer', etc.
+  code          String    @unique // 'hourly', 'fixed', 'retainer'
+  description   String?
+  display_order Int       @default(0)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([is_active])
+  @@index([code])
+}
+
+model firm_settings {
+  id            Int       @id @default(autoincrement())
+  setting_key   String    @unique
+  setting_value String    @db.Text
+  setting_type  String    @default("string") // 'string', 'number', 'boolean', 'json'
+  category      String    @default("general") // 'general', 'billing', 'email', 'uploads'
+  label         String?   // Human-readable label for UI
+  description   String?   // Help text
+  is_public     Boolean   @default(false) // Can be fetched without auth
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([category])
+  @@index([setting_key])
+}
+
+model audit_logs {
+  id            Int       @id @default(autoincrement())
+  entity_type   String    // 'matter', 'invoice', 'leave', 'user', etc.
+  entity_id     Int
+  action        String    // 'create', 'update', 'delete', 'approve', 'reject'
+  old_values    Json?     // Previous values (for updates)
+  new_values    Json?     // New values
+  changed_by    Int?
+  changed_at    DateTime  @default(now())
+  ip_address    String?
+  user_agent    String?   @db.Text
+  notes         String?   @db.Text
+  changer       users?    @relation("AuditLogChanger", fields: [changed_by], references: [user_id], onDelete: SetNull)
+
+  @@index([entity_type, entity_id])
+  @@index([changed_by])
+  @@index([changed_at])
+  @@index([action])
 }

@@ -1,9 +1,13 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { DollarSign, Check } from 'lucide-react';
 import { useCurrency, CurrencyCode } from '@/contexts/CurrencyContext';
 import { CURRENCY_SYMBOLS } from '@/lib/currencyUtils';
+import { useConfig } from '@/hooks/useConfig';
+
+// Fallback currencies
+const FALLBACK_CURRENCIES: CurrencyCode[] = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'JPY'];
 
 // ============================================================================
 // CURRENCY SWITCHER COMPONENT
@@ -11,10 +15,17 @@ import { CURRENCY_SYMBOLS } from '@/lib/currencyUtils';
 
 export default function CurrencySwitcher() {
     const { currency, setCurrency } = useCurrency();
+    const { currencies: configCurrencies } = useConfig();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const currencies: CurrencyCode[] = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'JPY'];
+    // Use config currencies if available
+    const currencies = useMemo(() => {
+        if (configCurrencies.length > 0) {
+            return configCurrencies.filter(c => c.is_active).map(c => c.code as CurrencyCode);
+        }
+        return FALLBACK_CURRENCIES;
+    }, [configCurrencies]);
 
     // Close dropdown when clicking outside
     useEffect(() => {

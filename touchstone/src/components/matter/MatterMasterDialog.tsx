@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import ClientDialog from '@/components/crm/ClientDialog'; // Adjust path as needed
 import RateCardDialog from '@/components/invoice/RateCardDialog'; // ✅ ADD THIS
 import { convertCurrency, formatAmountWithCurrency, type CurrencyCode } from '@/lib/currencyUtils';
+import { useConfig } from '@/hooks/useConfig';
 
 import { toast } from 'react-toastify';
 
@@ -164,26 +165,12 @@ const initialFormData = {
   currency: 'INR',
 };
 
-const PRACTICE_AREAS = [
-  'Corporate M&A',
-  'Competition & Antitrust',
-  'PE,VC & Alternative Investment',
-  'Employement, Pensions & Benefits',
-  'Data Privacy & Security',
-  'Dispute Resolutions & Investigations'
-];
-
-const MATTER_TYPES = [
-  'Advisory',
-  'Litigation',
-  'Transactional',
-  'Compliance',
-  'Dispute Resolution',
-];
-
-const BILLING_RATE_TYPES = ['hourly', 'fixed'];
-
-const STATUS_OPTIONS = ['active', 'closed', 'completed', 'on_hold', 'cancelled'];
+// These are now fetched dynamically via useConfig hook
+// Fallback values for when config hasn't loaded yet
+const FALLBACK_PRACTICE_AREAS = ['Corporate M&A', 'Litigation', 'IP', 'Banking & Finance'];
+const FALLBACK_MATTER_TYPES = ['Advisory', 'Transactional', 'Litigation', 'Compliance'];
+const FALLBACK_BILLING_RATE_TYPES = ['hourly', 'fixed'];
+const FALLBACK_STATUS_OPTIONS = ['active', 'closed', 'completed', 'on_hold', 'cancelled'];
 
 export default function MatterMasterDialog({
   open,
@@ -193,7 +180,34 @@ export default function MatterMasterDialog({
   matterId,
   // initialData, //initialFormData is used instead
 }: MatterDialogProps) {
-  
+
+  // Use dynamic configuration from backend
+  const {
+    practiceAreas: configPracticeAreas,
+    matterTypes: configMatterTypes,
+    matterStatuses: configMatterStatuses,
+    billingTypes: configBillingTypes,
+    currencies: configCurrencies,
+    loading: configLoading
+  } = useConfig();
+
+  // Use config values with fallbacks
+  const PRACTICE_AREAS = configPracticeAreas.length > 0
+    ? configPracticeAreas.map(pa => pa.name)
+    : FALLBACK_PRACTICE_AREAS;
+  const MATTER_TYPES = configMatterTypes.length > 0
+    ? configMatterTypes.map(mt => mt.name)
+    : FALLBACK_MATTER_TYPES;
+  const BILLING_RATE_TYPES = configBillingTypes.length > 0
+    ? configBillingTypes.map(bt => bt.code)
+    : FALLBACK_BILLING_RATE_TYPES;
+  const STATUS_OPTIONS = configMatterStatuses.length > 0
+    ? configMatterStatuses.map(ms => ms.code)
+    : FALLBACK_STATUS_OPTIONS;
+  const supportedCurrenciesFromConfig = configCurrencies.length > 0
+    ? configCurrencies.map(c => c.code)
+    : ['INR', 'USD', 'EUR', 'GBP', 'AED', 'JPY'];
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
@@ -242,7 +256,7 @@ export default function MatterMasterDialog({
   const [isLoadingMatterRequestedByUsers, setIsLoadingMatterRequestedByUsers] = useState(false);
   const [matterRequestedByComboboxOpen, setMatterRequestedByComboboxOpen] = useState(false);
   const [showClientDialog, setShowClientDialog] = useState(false);
-  const [supportedCurrencies, setSupportedCurrencies] = useState<string[]>(['INR', 'USD', 'EUR', 'GBP', 'AED', 'JPY']);
+  const [supportedCurrencies, setSupportedCurrencies] = useState<string[]>(supportedCurrenciesFromConfig);
   const [currencyComboboxOpen, setCurrencyComboboxOpen] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [assignedLawyerServiceSearchQuery, setAssignedLawyerServiceSearchQuery] = useState('');

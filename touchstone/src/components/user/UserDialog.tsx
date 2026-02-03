@@ -25,6 +25,7 @@ import { Field, FieldLabel, FieldError } from '../ui/field';
 import { API_ENDPOINTS } from '@/lib/api';
 import { formatRoleDisplay } from '@/utils/roleDisplay';
 import { toast } from 'react-toastify';
+import { useConfig } from '@/hooks/useConfig';
 
 
 interface User {
@@ -106,24 +107,36 @@ const initialFormData: FormData = {
   // userCode: '',
 };
 
+// Fallback values if config not loaded
+const FALLBACK_PRACTICE_AREAS = [
+  'Corporate M&A',
+  'Competition & Antitrust',
+  'PE,VC & Alternative Investment',
+  'Employement, Pensions & Benefits',
+  'Data Privacy & Security',
+  'Dispute Resolutions & Investigations'
+];
+const FALLBACK_LOCATIONS = ['delhi', 'mumbai', 'bangalore', 'delhi (lt)'];
+
 export default function UserDialog({ open, onOpenChange, onSuccess, mode, userData }: UserDialogProps) {
+  const { practiceAreas: configPracticeAreas, locations: configLocations } = useConfig();
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
   const [managers, setManagers] = useState<Manager[]>([]);
   const [reportingManagerComboboxOpen, setReportingManagerComboboxOpen] = useState(false);
-  // const [userTypes, setUserTypes] = useState<string[]>([]);
-  const [practiceAreas] = useState<string[]>([
-    'Corporate M&A',
-    'Competition & Antitrust',
-    'PE,VC & Alternative Investment',
-    'Employement, Pensions & Benefits',
-    'Data Privacy & Security',
-    'Dispute Resolutions & Investigations'
-  ]);
-  const [genders] = useState<string[]>(['male', 'female']);
-  const [locations] = useState<string[]>(['delhi', 'mumbai', 'bangalore', 'delhi (lt)']);  // ✅ All lowercase
+
+  // Use config values if available, otherwise use fallbacks
+  const practiceAreas = configPracticeAreas.length > 0
+    ? configPracticeAreas.filter(pa => pa.is_active).map(pa => pa.name)
+    : FALLBACK_PRACTICE_AREAS;
+
+  const locations = configLocations.length > 0
+    ? configLocations.filter(l => l.active_status).map(l => l.location_code.toLowerCase())
+    : FALLBACK_LOCATIONS;
+
+  const genders = ['male', 'female'];
   
   // Pre-populate form when in edit mode
   useEffect(() => {
