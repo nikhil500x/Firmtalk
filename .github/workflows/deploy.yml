@@ -73,19 +73,13 @@ jobs:
             backend-express/ \
             ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.PROJECT_ROOT }}/backend-express/
 
-      - name: Install Dependencies & Run Migrations
+      - name: Install Dependencies & Setup
         run: |
           ssh ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} << 'EOF'
             cd /home/ubuntu/Touchstone/backend-express
-
-            # Install dependencies
-            npm ci --omit=dev
-
-            # Generate Prisma client
+            npm ci
             npx prisma generate
-
-            # Run database migrations (use db push for now)
-            npx prisma db push --skip-generate
+            npx tsx scripts/create-superadmin.ts || echo "User creation skipped"
           EOF
 
       - name: Restart Services
